@@ -1,8 +1,8 @@
 :root {
-  --midnight-blue: #1b263b;
-  --steel-blue: #415a77;
-  --platinum-gray: #e0e1dd;
-  --signal-orange: #ff9f1c;
+  --primary: #000000;
+  --secondary: #1f150c;
+  --thirdnary: #412d15;
+  --soft: #e1dcc9;
 
   --white: #fff;
   --black: #000;

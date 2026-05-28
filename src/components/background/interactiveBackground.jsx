@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import logo from "/images/logo/logo-nobg.png";
 
-const InteractiveBackground = () => {
+const DynamicTechnoGrid = () => {
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth) * 100;
-      const y = (e.clientY / window.innerHeight) * 100;
-      setMousePos({ x, y });
+      setMousePos({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -22,32 +23,45 @@ const InteractiveBackground = () => {
     left: "0",
     top: "0",
     zIndex: "-1",
-    backgroundColor: "var(--midnight-blue)",
-    backgroundImage: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%,var(--steel-blue) 10%, var(--midnight-blue) 90%)`,
+    backgroundColor: "var(--soft)",
     overflow: "hidden",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    transition: "background 0.1s ease-out",
+  };
+
+  const gridOverlayStyle = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: "0.25",
+    backgroundImage: `
+      linear-gradient(var(--thirdnary) 1px, transparent 1px),
+      linear-gradient(90deg, var(--thirdnary) 1px, transparent 1px)
+    `,
+    backgroundSize: "20px 20px",
+    maskImage: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, black 5%, transparent 60%)`,
+    WebkitMaskImage: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, black 5%, transparent 60%)`,
+    backgroundColor: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, var(--primary) 0%, var(--secondary) 100%)`,
   };
 
   const pistonStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "300px",
+    width: "350px",
     height: "auto",
-    opacity: "0.4",
+    opacity: "0.6",
     pointerEvents: "none",
     zIndex: 1,
+    filter: `drop-shadow(0 0 8px var(--primary))`,
   };
 
   return (
     <div style={bgStyle}>
-      <img src={logo} alt="Piston Background" style={pistonStyle} />
+      <div style={gridOverlayStyle} />
+      <img src={logo} alt="Piston Logo" style={pistonStyle} />
     </div>
   );
 };
 
-export default InteractiveBackground;
+export default DynamicTechnoGrid;
