@@ -1,0 +1,466 @@
+.main {
+  width: 100%;
+  height: fit-content;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--px-128) var(--px-32);
+
+  .authContainer {
+    width: 100%;
+    max-width: 720px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    border-radius: var(--px-16);
+    box-shadow: 1px 1px 8px var(--platinum-gray);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--px-64);
+    padding: var(--px-64) var(--px-32);
+    padding-bottom: 0;
+
+    > header {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: var(--px-24);
+
+      .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--px-8);
+
+        padding: var(--px-8) var(--px-24);
+        background-color: var(--midnight-blue);
+        border-radius: var(--px-16);
+
+        img {
+          width: var(--px-64);
+          filter: invert(1);
+        }
+
+        h1 {
+          font-size: var(--fs-10);
+          font-weight: 500;
+          color: var(--signal-orange);
+
+          span {
+            color: var(--platinum-gray);
+          }
+        }
+      }
+
+      h2 {
+        width: 100%;
+        text-align: center;
+        font-size: var(--fs-10);
+        font-weight: 600;
+        color: var(--platinum-gray);
+
+        border-bottom: 1px solid var(--platinum-gray);
+      }
+    }
+
+    > form {
+      width: 100%;
+    }
+
+    > form .formContainer {
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      gap: var(--px-40);
+
+      .inputContainer {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        position: relative;
+
+        input {
+          width: 100%;
+          font-size: var(--fs-7);
+          font-weight: 400;
+
+          padding: var(--px-16);
+          background-color: var(--gray-400);
+
+          border-radius: var(--px-8);
+          border: 1px solid var(--platinum-gray);
+        }
+
+        label {
+          width: fit-content;
+          position: absolute;
+          left: 1px;
+          padding: var(--px-4) var(--px-16);
+
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          gap: var(--px-8);
+
+          font-size: var(--fs-6);
+          font-weight: 500;
+          color: var(--gray-500);
+
+          cursor: text;
+        }
+
+        input:focus + label,
+        input:not(:placeholder-shown) + label {
+          opacity: 0;
+          z-index: -1;
+        }
+      }
+      .inputContainer:has(input[type="file"]) {
+        > input {
+          display: none;
+        }
+
+        > label {
+          aspect-ratio: 1/1;
+          width: 50%;
+          max-width: var(--px-256);
+          height: auto;
+          border-radius: 1000px;
+          background-color: var(--gray-400);
+
+          position: static;
+          overflow: hidden;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+
+          text-align: center;
+          font-size: var(--fs-6);
+          font-weight: 400;
+          color: var(--midnight-blue);
+          padding: var(--px-16);
+
+          cursor: pointer;
+
+          img {
+            object-fit: cover;
+          }
+        }
+        > label:hover {
+          transform: scale(1.025);
+          background-color: var(--platinum-gray);
+        }
+        > label:active {
+          transform: scale(0.9);
+        }
+      }
+
+      > button {
+        width: 100%;
+        padding: var(--px-8);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--px-16);
+
+        background-color: var(--signal-orange);
+        border-radius: var(--px-8);
+
+        font-size: var(--fs-6);
+        font-weight: 600;
+        color: var(--platinum-gray);
+
+        cursor: pointer;
+      }
+      > button:hover {
+        transform: scale(1.025);
+        background-color: var(--steel-blue);
+      }
+      > button:active {
+        transform: scale(0.8);
+      }
+    }
+
+    > span {
+      font-size: var(--fs-6);
+      font: 400;
+      color: var(--midnight-blue);
+
+      a {
+        color: var(--platinum-gray);
+      }
+    }
+  }
+
+  .profileContainer {
+    width: 100%;
+    height: fit-content;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--px-32);
+
+    background-color: var(--platinum-gray);
+    padding: var(--px-32);
+    border-radius: var(--px-24);
+    border: 1px solid var(--midnight-blue);
+    box-shadow: 0px -2px 4px var(--gray-700);
+
+    .bio {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: var(--px-24);
+
+      padding-bottom: var(--px-32);
+      border-bottom: 2px solid var(--midnight-blue);
+
+      .photo {
+        aspect-ratio: 1/1;
+        width: var(--px-256);
+        height: auto;
+        overflow: hidden;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 200px;
+
+        position: relative;
+
+        > img {
+          width: 100%;
+          height: auto;
+        }
+
+        > label {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          font-size: var(--fs-5);
+          font-weight: 400;
+
+          width: 200%;
+          height: 200%;
+          background-color: var(--signal-orange);
+
+          cursor: pointer;
+          opacity: 0;
+        }
+        > label:hover,
+        > label[photo="null"] {
+          opacity: 1;
+        }
+
+        > input {
+          display: none;
+        }
+      }
+
+      .name {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: var(--px-8);
+
+        > span:first-of-type {
+          font-size: var(--fs-10);
+          font-weight: 500;
+          color: var(--midnight-blue);
+          text-shadow: 1px -2px 4px var(--gray-700);
+          text-overflow: ellipsis;
+          text-wrap: nowrap;
+          overflow: hidden;
+        }
+
+        > span:last-of-type {
+          font-size: var(--fs-7);
+          font-weight: 400;
+          color: var(--gray-800);
+          text-overflow: ellipsis;
+          text-wrap: nowrap;
+          overflow: hidden;
+        }
+      }
+    }
+
+    .content,
+    .security {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: center;
+      gap: var(--px-48);
+
+      padding-bottom: var(--px-32);
+      border-bottom: 2px solid var(--midnight-blue);
+
+      .inputContainer {
+        flex: 1 1 45%;
+        min-width: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: var(--px-8);
+
+        > label {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          gap: var(--px-12);
+
+          font-size: var(--fs-7);
+          font-weight: 500;
+          color: var(--gray-800);
+
+          > button {
+            font-size: var(--fs-6);
+            padding: var(--px-4);
+            border-radius: var(--px-8);
+            cursor: pointer;
+            color: var(--white);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          > button[title="Edit"] {
+            background-color: var(--btn-info);
+          }
+          > button[title="Save"] {
+            background-color: var(--btn-save);
+          }
+          > button[title="Cancel"] {
+            background-color: var(--btn-danger);
+          }
+          > button:hover {
+            transform: scale(1.25);
+            background-color: var(--signal-orange);
+          }
+        }
+
+        > input {
+          width: 100%;
+          padding: var(--px-8) var(--px-24);
+
+          background-color: var(--gray-100);
+          border-radius: var(--px-16);
+          border: 1px solid var(--midnight-blue);
+
+          font-size: var(--fs-6);
+          font-weight: 400;
+          color: var(--midnight-blue);
+        }
+        > input:disabled {
+          background-color: transparent;
+          border-color: transparent;
+          padding-left: 0;
+        }
+
+        > button {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: var(--px-12);
+          padding: var(--px-8);
+          border-radius: var(--px-8);
+          box-shadow: -2px 2px 4px var(--gray-700);
+          background-color: var(--btn-save);
+          color: var(--platinum-gray);
+          cursor: pointer;
+        }
+        > button:hover {
+          background-color: var(--signal-orange);
+        }
+        > button:disabled {
+          background-color: var(--gray-300);
+          color: var(--gray-200);
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .main {
+    width: 100%;
+    height: fit-content;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--px-64) var(--px-8);
+
+    .authContainer {
+      gap: var(--px-32);
+
+      > header {
+        gap: var(--px-16);
+
+        .logo {
+          > img {
+            width: var(--px-40);
+          }
+
+          > h1 {
+            font-size: var(--fs-8);
+          }
+        }
+      }
+
+      form .formContainer {
+        .inputContainer {
+          > input {
+            font-size: var(--fs-5);
+          }
+
+          > label {
+            font-size: var(--fs-5);
+          }
+        }
+        .inputContainer:has(input[type="file"]) {
+          > label {
+            width: 25%;
+            font-size: var(--fs-4);
+          }
+        }
+
+        > button {
+          gap: var(--px-8);
+          font-size: var(--fs-5);
+        }
+      }
+    }
+
+    .profileContainer {
+      width: 80%;
+    }
+  }
+}

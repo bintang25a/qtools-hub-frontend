@@ -1,0 +1,191 @@
+:root {
+  --midnight-blue: #1b263b;
+  --steel-blue: #415a77;
+  --platinum-gray: #e0e1dd;
+  --signal-orange: #ff9f1c;
+
+  --white: #fff;
+  --black: #000;
+
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+
+  --px-2: calc((0.125vw + 0.125vh) / 1.7778);
+  --px-4: calc((0.25vw + 0.25vh) / 1.7778);
+  --px-8: calc((0.5vw + 0.5vh) / 1.7778);
+  --px-12: calc((0.75vw + 0.75vh) / 1.7778);
+  --px-16: calc((1vw + 1vh) / 1.7778);
+  --px-24: calc((1.5vw + 1.5vh) / 1.7778);
+  --px-32: calc((2vw + 2vh) / 1.7778);
+  --px-40: calc((2.5vw + 2.5vh) / 1.7778);
+  --px-48: calc((3vw + 3vh) / 1.7778);
+  --px-56: calc((3.5vw + 3.5vh) / 1.7778);
+  --px-64: calc((4vw + 4vh) / 1.7778);
+  --px-80: calc((5vw + 5vh) / 1.7778);
+  --px-96: calc((6vw + 6vh) / 1.7778);
+  --px-128: calc((8vw + 8vh) / 1.7778);
+  --px-192: calc((12vw + 12vh) / 1.7778);
+  --px-256: calc((16vw + 16vh) / 1.7778);
+  --px-512: calc((32vw + 32vh) / 1.7778);
+
+  --fs-1: clamp(2px, var(--px-4), 0.675rem);
+  --fs-2: clamp(4px, var(--px-8), 1.25rem);
+  --fs-3: clamp(6px, var(--px-12), 1.75rem);
+  --fs-4: clamp(8px, var(--px-16), 2.25rem);
+  --fs-5: clamp(10px, calc(var(--px-16) * 1.25), 3rem);
+  --fs-6: clamp(12px, var(--px-24), 3.5rem);
+  --fs-7: clamp(14px, calc(var(--px-24) * 1.2), 4rem);
+  --fs-8: clamp(16px, var(--px-32), 5rem);
+  --fs-9: clamp(20px, var(--px-40), 6rem);
+  --fs-10: clamp(24px, var(--px-48), 7rem);
+  --fs-11: clamp(28px, var(--px-56), 8rem);
+  --fs-12: clamp(32px, var(--px-64), 9rem);
+
+  --btn-danger: #dc3545;
+  --btn-warning: #f59e0b;
+  --btn-info: #0dcaf0;
+  --btn-save: #28a745;
+  --btn-neutral: #868e96;
+}
+
+::-webkit-scrollbar {
+  min-width: 8px;
+  width: var(--px-4);
+  height: var(--px-4);
+}
+::-webkit-scrollbar-track {
+  background-color: var(--gray-100);
+  border-radius: var(--px-16);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--signal-orange);
+  border-radius: var(--px-16);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    to bottom,
+    var(--platinum-gray),
+    var(--signal-orange)
+  );
+  cursor: pointer;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+/* 1. Use a more-intuitive box-sizing model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+  text-decoration: none;
+  scroll-behavior: smooth;
+  transition: 0.3s ease-in-out;
+}
+
+/* 3. Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  /* 4. Add accessible line-height */
+  line-height: 1.5;
+  /* 5. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body:has([theme="dark"]) {
+  background-color: var(--gray-900);
+}
+
+/* 6. Improve media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/*
+   10. Create a root stacking context
+ */
+#root,
+#__next {
+  isolation: isolate;
+}
+
+#root {
+  width: 100%;
+  height: fit-content;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  position: relative;
+}
+
+@media screen and (min-width: 768px) {
+  #root {
+    align-items: center;
+  }
+}
