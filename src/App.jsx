@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import InteractiveBackground from "./components/background/interactiveBackground";
+import Login from "./pages/auth/Login";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<InteractiveBackground />} />
+        <Route index element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
