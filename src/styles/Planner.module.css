@@ -1,0 +1,129 @@
+.main {
+  width: 100%;
+  height: fit-content;
+  padding: var(--px-16);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--px-16);
+
+  .title {
+    width: 100%;
+
+    padding: var(--px-8) var(--px-16);
+
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(2px);
+    border-radius: var(--px-16);
+    border: 2px solid var(--primary);
+
+    box-shadow: 1px 1px 2px var(--gray-600);
+
+    > h1 {
+      font-size: var(--fs-8);
+      font-weight: 600;
+      color: var(--primary);
+      text-wrap: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
+  .panelContainer {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--px-16);
+    align-items: center;
+    justify-content: center;
+
+    .panelCard {
+      flex: 1;
+      min-width: 150px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: var(--px-24);
+      border-radius: var(--px-16);
+      border: 1px solid;
+
+      box-shadow: 1px 1px 2px var(--gray-500);
+      background-color: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(2px);
+
+      position: relative;
+
+      .detail {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+
+        > h2 {
+          font-size: var(--fs-12);
+          font-weight: 800;
+          color: var(--primary);
+        }
+
+        > span {
+          font-size: var(--fs-4);
+          font-weight: 400;
+          color: var(--gray-600);
+          opacity: 0.9;
+          text-wrap: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
+
+      .icon {
+        aspect-ratio: 1/1;
+        width: var(--px-96);
+        height: auto;
+
+        border: 1px solid var(--primary);
+        border-radius: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: var(--gray-100);
+
+        font-size: var(--fs-12);
+      }
+    }
+    .panelCard:nth-of-type(1) {
+      border-color: var(--btn-save);
+
+      .icon {
+        color: var(--btn-save);
+      }
+    }
+    .panelCard:nth-of-type(2) {
+      border-color: var(--btn-warning);
+
+      .icon {
+        color: var(--btn-warning);
+      }
+    }
+    .panelCard:nth-of-type(3) {
+      border-color: var(--btn-danger);
+
+      .icon {
+        color: var(--btn-danger);
+      }
+    }
+    .panelCard:nth-of-type(4) {
+      border-color: var(--btn-info);
+
+      .icon {
+        color: var(--btn-info);
+      }
+    }
+  }
+}

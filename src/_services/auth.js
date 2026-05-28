@@ -23,9 +23,7 @@ export const login = async (data) => {
     const token = resData?.token;
     const user = {
       name: resData?.name,
-      uid: resData?.uid,
-      email: resData?.email,
-      phone_number: resData?.phone_number,
+      nrp: resData?.nrp,
       role: resData?.role,
       photo: resData?.photo,
     };
@@ -79,7 +77,7 @@ export const isAuthenticated = async () => {
 // Fungsi Logout
 export const logout = async () => {
   try {
-    const response = await API.post("/logout");
+    const response = await API.delete("/logout");
 
     localStorage.removeItem("user");
     localStorage.removeItem("token");

@@ -1,153 +1,79 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { MdClose, MdLogout, MdMenu } from "react-icons/md";
+import profile from "/images/profile/profile.webp";
 import logo from "/images/logo/logo-nobg.png";
 import styles from "../../styles/Layout.module.css";
+import {
+  MdLogout,
+  MdMenu,
+  MdNotifications,
+  MdNotificationsActive,
+} from "react-icons/md";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../_services/auth";
-import NavbarUnsigned from "./NavbarUnsigned";
-import NavbarSigned from "./NavbarSigned";
-import NavbarAdmin from "./NavbarAdmin";
 import { getPhoto } from "../../_services/files";
 
-export default function Header({ setIsLoading, setRefresh, userData }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [user, setUser] = useState({});
-
+export default function Header({ user, setSidebarOpen, hasNotifications }) {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
+  const [profileOpen, setProfileOpen] = useState(false);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      const localUser = localStorage.getItem("user");
-      const parseUser = localUser ? JSON.parse(localUser) : {};
-
-      if (!userData) {
-        setUser(parseUser);
-      } else {
-        setUser(userData);
-      }
-
-      if (token) {
-        setIsLogin(true);
-      }
-
-      setTimeout(() => setIsLoading(false), 5000);
-    };
-
-    fetchUser();
-
-    // eslint-disable-next-line
-  }, []);
-
-  const handleLogout = async () => {
-    setIsLoading(true);
-
-    await logout();
-
-    setIsLogin(false);
-    setIsOpen(false);
-    navigate("/", { replace: true });
-
-    setTimeout(() => setIsLoading(false), 250);
+  const toggleProfile = () => {
+    setProfileOpen(!profileOpen);
+    setSidebarOpen(false);
   };
 
-  const [isTablet, setIsTablet] = useState(window.innerWidth <= 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsTablet(window.innerWidth <= 768);
-      setIsOpen(false);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const path = useLocation();
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [path]);
-
-  const style = {
-    header: `${styles.header} ${isScrolled ? styles.scrolled : ""}`,
-    menuButton: styles.menuButton,
-    profile: !isTablet ? styles?.profile : styles.profileOff,
-    logo: styles.logo,
-    photo: styles.photo,
-    text: styles.text,
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      navigate("/login", { replace: true });
+    }
   };
 
   return (
-    <header className={style.header}>
-      <div className={style.logo}>
+    <header className={styles.header}>
+      <button
+        className={styles.menuButton}
+        onClick={() => setSidebarOpen((prev) => !prev)}
+      >
+        <MdMenu />
+      </button>
+
+      <div className={styles.logo}>
         <img src={logo} alt="Logo" />
+
         <h1>
-          Auto<span>Mechanic</span>
+          QTools <span>Hub</span>
         </h1>
       </div>
 
-      {isTablet && (
-        <button className={style.menuButton} onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <MdClose /> : <MdMenu />}
-        </button>
-      )}
+      <div className={styles.personal} onClick={toggleProfile}>
+        {hasNotifications && (
+          <button>
+            <MdNotificationsActive />
+          </button>
+        )}
 
-      {!isLogin ? (
-        <NavbarUnsigned isOpen={isOpen} />
-      ) : !path?.pathname?.includes("admin") ? (
-        <NavbarSigned
-          isOpen={isOpen}
-          isTablet={isTablet}
-          user={user}
-          handleLogout={handleLogout}
-        />
-      ) : (
-        <NavbarAdmin handleLogout={handleLogout} setRefresh={setRefresh} />
-      )}
+        <img src={user?.photo ? getPhoto(user?.photo) : profile} alt="Logo" />
+      </div>
 
-      {user?.uid && (
-        <div className={style.profile} onClick={() => setIsOpen(!isOpen)}>
-          <button
-            title="logout"
-            onClick={handleLogout}
-            style={{ display: isOpen ? "flex" : "none" }}
-          >
+      <div className={styles.personalDetail}>
+        <h2>{user?.name}</h2>
+        <span>
+          {user?.nrp} | {user?.role?.toUpperCase()}
+        </span>
+      </div>
+
+      {profileOpen && (
+        <div className={styles.personalMenu}>
+          <Link to={"notifications"}>
+            <MdNotifications /> Notification
+          </Link>
+          <button onClick={handleLogout}>
             <MdLogout /> Logout
           </button>
-
-          <div className={style.photo}>
-            {user?.photo ? (
-              <img src={getPhoto(user?.photo)} alt="Photo" />
-            ) : (
-              "Photo"
-            )}
-          </div>
-
-          <div className={style.text}>
-            <h2>{user?.name}</h2>
-            <span>
-              {user?.role?.toUpperCase()} {isTablet && user?.email}
-            </span>
-          </div>
         </div>
       )}
     </header>

@@ -1,0 +1,181 @@
+.authPage {
+  width: 100%;
+  height: fit-content;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: var(--px-32);
+
+  .box {
+    width: 100%;
+    max-width: 600px;
+
+    padding: var(--px-64) var(--px-32);
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    border-radius: var(--px-16);
+    border: 2px solid var(--primary);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: var(--px-32);
+
+    > h1 {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--px-8);
+
+      font-size: var(--fs-10);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--primary);
+    }
+
+    > h2 {
+      width: 100%;
+
+      text-align: center;
+      font-size: var(--fs-8);
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    > form {
+      width: 100%;
+      height: fit-content;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .inputForm {
+      width: 100%;
+      height: fit-content;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: var(--px-24);
+
+      padding: var(--px-64) 0;
+      border-top: 1px solid var(--thirdnary);
+      border-bottom: 1px solid var(--thirdnary);
+
+      .inputContainer {
+        width: 100%;
+        height: fit-content;
+
+        display: flex;
+        position: relative;
+
+        overflow: visible;
+
+        > input {
+          width: 100%;
+          padding: var(--px-8);
+
+          font-size: var(--fs-8);
+          font-weight: 400;
+          color: var(--secondary);
+
+          background-color: transparent;
+          border-radius: var(--px-8);
+          border-left: 1px solid var(--secondary);
+          border-bottom: 2px solid var(--secondary);
+        }
+        > input:focus + label,
+        > input:valid + label {
+          opacity: 0;
+        }
+        > label {
+          position: absolute;
+          left: var(--px-8);
+          top: 50%;
+          transform: translateY(-50%);
+
+          font-size: var(--fs-7);
+          font-weight: 500;
+          color: var(--thirdnary);
+          opacity: 0.5;
+        }
+        .inputIcon {
+          position: absolute;
+          right: var(--px-16);
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: var(--fs-8);
+          color: var(--gray-800);
+        }
+      }
+
+      .inputSubmit {
+        width: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--px-16);
+
+        padding: var(--px-8);
+
+        font-size: var(--fs-8);
+        font-weight: 600;
+        color: var(--soft);
+
+        background-color: var(--secondary);
+        border-radius: var(--px-8);
+      }
+      .inputSubmit:hover {
+        background-color: var(--thirdnary);
+        cursor: pointer;
+      }
+      .inputSubmit:active {
+        transform: scale(0.9);
+      }
+      .inputSubmit:disabled {
+        background-color: var(--gray-400);
+        cursor: not-allowed;
+      }
+    }
+
+    > p {
+      width: 100%;
+      text-align: center;
+
+      font-size: var(--fs-5);
+      font-weight: 400;
+      color: var(--gray-800);
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .authPage .box .inputForm {
+    padding: var(--px-48) 0;
+
+    .inputContainer {
+      > input,
+      > label {
+        font-size: var(--fs-5);
+      }
+
+      .inputIcon {
+        font-size: var(--fs-6);
+      }
+    }
+
+    .inputSubmit {
+      font-size: var(--fs-6);
+    }
+  }
+}
