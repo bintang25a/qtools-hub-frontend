@@ -1,12 +1,13 @@
-import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import styles from "../../styles/Planner.module.css";
 import {
   HiOutlineBriefcase,
   HiOutlineArrowCircleUp,
   HiOutlineDocumentReport,
 } from "react-icons/hi";
+import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { FaEye, FaPencil } from "react-icons/fa6";
 
 export default function Dashboard() {
   const { data, firstLoad, overlay } = useOutletContext();
@@ -15,8 +16,8 @@ export default function Dashboard() {
   const { assets, reports } = data;
 
   const [totalAssets, setTotalAssets] = useState(0);
-  const [borrows, setBorrows] = useState(0);
-  const [repairs, setRepairs] = useState(0);
+  const [borrows, setBorrows] = useState([]);
+  const [repairs, setRepairs] = useState([]);
 
   useEffect(() => {
     const { isFirstLoad } = firstLoad;
@@ -106,6 +107,144 @@ export default function Dashboard() {
           <div className={styles.icon}>
             <HiOutlineDocumentReport />
           </div>
+        </div>
+      </section>
+
+      <section rank="1" className={styles.data}>
+        <h2>
+          <HiOutlineArrowCircleUp /> Top 5 Borrow
+        </h2>
+
+        <div className={styles.tableContainer}>
+          <table>
+            <thead>
+              <tr>
+                <th>Asset Number</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {borrows?.length === 0 ? (
+                <tr>
+                  <td colSpan={4}>No Borrow Asset</td>
+                </tr>
+              ) : null}
+
+              {borrows?.slice(0, 5)?.map((a) => (
+                <tr key={a?.asset_number}>
+                  <td>{a?.asset_number}</td>
+                  <td>{a?.location}</td>
+                  <td>{a?.description}</td>
+                  <td>
+                    <div className={styles.action}>
+                      <button title="View">
+                        <FaEye />
+                      </button>
+                      <button title="Edit">
+                        <FaPencil />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section rank="2" className={styles.data}>
+        <h2>
+          <HiOutlineWrenchScrewdriver /> Top 5 Repair
+        </h2>
+
+        <div className={styles.tableContainer}>
+          <table>
+            <thead>
+              <tr>
+                <th>Asset Number</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {repairs?.length === 0 ? (
+                <tr>
+                  <td colSpan={4}>No Repair Asset</td>
+                </tr>
+              ) : null}
+
+              {repairs?.slice(0, 5)?.map((a) => (
+                <tr key={a?.asset_number}>
+                  <td>{a?.asset_number}</td>
+                  <td>{a?.location}</td>
+                  <td>{a?.description}</td>
+                  <td>
+                    <div className={styles.action}>
+                      <button title="View">
+                        <FaEye />
+                      </button>
+                      <button title="Edit">
+                        <FaPencil />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section rank="3" className={styles.data}>
+        <h2>
+          <HiOutlineDocumentReport /> Top 5 Report
+        </h2>
+
+        <div className={styles.tableContainer}>
+          <table>
+            <thead>
+              <tr>
+                <th>Report ID</th>
+                <th>Description</th>
+                <th>Reporter</th>
+                <th>Asset</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports?.length === 0 ? (
+                <tr>
+                  <td colSpan={5}>No Report Asset</td>
+                </tr>
+              ) : null}
+
+              {reports?.slice(0, 5)?.map((r) => (
+                <tr key={r?.report_id}>
+                  <td>{r?.report_id}</td>
+                  <td>{r?.description}</td>
+                  <td>
+                    {r?.reporter_id}-{r?.reporter?.name}
+                  </td>
+                  <td>
+                    {r?.asset_id}-{r?.asset?.description}
+                  </td>
+                  <td>
+                    <div className={styles.action}>
+                      <button title="View">
+                        <FaEye />
+                      </button>
+                      <button title="Edit">
+                        <FaPencil />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
     </main>

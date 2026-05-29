@@ -5,11 +5,16 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: "0.0.0.0", // Memaksa Vite mendengar semua IP
+    allowedHosts: [
+      "165a-2405-8180-401-7d68-3d58-b19c-b5bd-221b.ngrok-free.app",
+      "https://hqhhcnz8-5173.asse.devtunnels.ms/",
+    ],
+    host: "localhost",
+    // host: "0.0.0.0",
     port: 5173,
-    strictPort: true, // Supaya port tidak berubah-ubah kalau error
+    strictPort: true,
     watch: {
-      usePolling: true, // Penting agar perubahan kode terdeteksi lebih stabil di jaringan Wi-Fi
+      usePolling: true,
     },
   },
 });

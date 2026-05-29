@@ -57,7 +57,8 @@
 }
 
 ::-webkit-scrollbar {
-  min-width: 8px;
+  min-width: 6px;
+  min-height: 6px;
   width: var(--px-4);
   height: var(--px-4);
 }

@@ -1,0 +1,176 @@
+import { useEffect } from "react";
+import styles from "../../styles/Planner.module.css";
+import { useOutletContext } from "react-router-dom";
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaEye,
+  FaMagnifyingGlass,
+  FaPencil,
+  FaTrash,
+  FaUser,
+  FaWrench,
+} from "react-icons/fa6";
+
+export default function Asset() {
+  const { data, firstLoad, overlay, feature } = useOutletContext();
+
+  const { setIsLoading } = overlay;
+  const { assets } = data;
+  const {
+    totalPage,
+    currentPage,
+    setSearchData,
+    handleChangePage,
+    handleSearchSubmit,
+  } = feature;
+
+  useEffect(() => {
+    const { isFirstLoad } = firstLoad;
+
+    if (!isFirstLoad) {
+      setIsLoading(true);
+
+      setSearchData({
+        key: "",
+        value: "",
+      });
+    }
+
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    const { setIsFirstLoad } = firstLoad;
+
+    let conditionTimeout;
+
+    if (assets) {
+      conditionTimeout = setTimeout(() => {
+        setIsFirstLoad(false);
+        setIsLoading(false);
+      }, 250);
+    }
+
+    const overlimitTimeout = setTimeout(() => {
+      setIsFirstLoad(false);
+      setIsLoading(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(conditionTimeout);
+      clearTimeout(overlimitTimeout);
+    };
+
+    // eslint-disable-next-line
+  }, [assets]);
+
+  const handleSearchChange = (e) => {
+    const { name, value } = e.target;
+
+    setSearchData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  return (
+    <main className={styles.main}>
+      <section className={styles.title}>
+        <h1>
+          <FaWrench className={styles.titleIcon} /> Asset Data
+        </h1>
+      </section>
+
+      <section rank="full" className={styles.data}>
+        <form onSubmit={handleSearchSubmit}>
+          <div className={styles.searchContainer}>
+            <input
+              type="text"
+              name="value"
+              id="value"
+              placeholder="Search..."
+              onChange={handleSearchChange}
+            />
+
+            <select name="key" id="key" onChange={handleSearchChange}>
+              <option value="">Search by</option>
+              <option value="asset_number">Asset Number</option>
+              <option value="class">Class</option>
+              <option value="status">Status</option>
+              <option value="location">Location</option>
+              <option value="creator">Creator</option>
+            </select>
+
+            <button type="submit" title="Search">
+              <FaMagnifyingGlass />
+            </button>
+          </div>
+        </form>
+
+        <div className={styles.tableContainer}>
+          <table>
+            <thead>
+              <tr>
+                <th>Asset Number</th>
+                <th>Class</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Location</th>
+                <th>Creator</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assets?.length === 0 ? (
+                <tr>
+                  <td colSpan={4}>No Users</td>
+                </tr>
+              ) : null}
+
+              {assets?.map((a) => (
+                <tr key={a?.asset_number}>
+                  <td>{a?.asset_number}</td>
+                  <td>{a?.class}</td>
+                  <td>{a?.description}</td>
+                  <td>{a?.status}</td>
+                  <td>{a?.location}</td>
+                  <td>{a?.creator}</td>
+                  <td>
+                    <div className={styles.action}>
+                      <button title="View">
+                        <FaEye />
+                      </button>
+                      <button title="Edit">
+                        <FaPencil />
+                      </button>
+                      <button title="Delete">
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className={styles.paginateContainer}>
+          <button
+            onClick={() => handleChangePage(false)}
+            disabled={currentPage == 1}
+          >
+            <FaArrowLeft /> Prev
+          </button>
+          <span title={`Page ${currentPage}`}>{currentPage}</span>
+          <button
+            onClick={() => handleChangePage(true)}
+            disabled={currentPage == totalPage}
+          >
+            Next <FaArrowRight />
+          </button>
+        </div>
+      </section>
+    </main>
+  );
+}

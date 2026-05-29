@@ -7,13 +7,14 @@ import {
   MdNotifications,
   MdNotificationsActive,
 } from "react-icons/md";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../_services/auth";
 import { getPhoto } from "../../_services/files";
 
 export default function Header({ user, setSidebarOpen, hasNotifications }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -31,6 +32,10 @@ export default function Header({ user, setSidebarOpen, hasNotifications }) {
       navigate("/login", { replace: true });
     }
   };
+
+  useEffect(() => {
+    setProfileOpen(false);
+  }, [location.pathname]);
 
   return (
     <header className={styles.header}>

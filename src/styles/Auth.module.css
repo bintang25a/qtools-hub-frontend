@@ -96,6 +96,7 @@
         > input:focus + label,
         > input:valid + label {
           opacity: 0;
+          z-index: -1;
         }
         > label {
           position: absolute;
