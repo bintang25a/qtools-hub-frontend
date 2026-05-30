@@ -16,6 +16,18 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="assets" element={<Asset />} />
+          <Route
+            path="transactions"
+            element={<main>Transactions Page Coming Soon</main>}
+          />
+          <Route
+            path="repairs"
+            element={<main>Repairs Page Coming Soon</main>}
+          />
+          <Route
+            path="reports"
+            element={<main>Reports Page Coming Soon</main>}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

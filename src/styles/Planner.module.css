@@ -338,22 +338,36 @@
         cursor: not-allowed;
       }
 
-      > span {
-        aspect-ratio: 1/1;
-        height: 100%;
-        width: auto;
-
-        background-color: var(--secondary);
-        border: 1px solid var(--secondary);
-        border-radius: var(--px-8);
-        color: var(--white);
-
-        font-size: var(--fs-5);
-        font-weight: 500;
-
+      .page {
         display: flex;
-        justify-content: center;
-        align-items: center;
+        height: 100%;
+        width: fit-content;
+        gap: var(--px-4);
+
+        > span {
+          aspect-ratio: 1/1;
+          height: 100%;
+          width: auto;
+
+          background-color: var(--secondary);
+          border: 1px solid var(--secondary);
+          border-radius: var(--px-8);
+          color: var(--white);
+
+          font-size: var(--fs-5);
+          font-weight: 500;
+          line-height: 1;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        > span[inactive="true"] {
+          background-color: var(--white);
+          color: var(--secondary);
+          cursor: pointer;
+        }
       }
     }
   }

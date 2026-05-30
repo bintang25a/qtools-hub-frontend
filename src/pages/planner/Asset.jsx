@@ -31,6 +31,8 @@ export default function Asset() {
     if (!isFirstLoad) {
       setIsLoading(true);
 
+      handleChangePage("default");
+
       setSearchData({
         key: "",
         value: "",
@@ -162,7 +164,37 @@ export default function Asset() {
           >
             <FaArrowLeft /> Prev
           </button>
-          <span title={`Page ${currentPage}`}>{currentPage}</span>
+
+          {totalPage === 1 ? (
+            <div className={styles.page}>
+              <span title={`Page ${currentPage}`}>{currentPage}</span>
+            </div>
+          ) : (
+            <div className={styles.page}>
+              {currentPage !== 1 && (
+                <span
+                  title={`Page 1`}
+                  inactive="true"
+                  onClick={() => handleChangePage(1)}
+                >
+                  1
+                </span>
+              )}
+
+              <span title={`Page ${currentPage}`}>{currentPage}</span>
+
+              {currentPage !== totalPage && (
+                <span
+                  title={`Page ${totalPage}`}
+                  inactive="true"
+                  onClick={() => handleChangePage(Number(totalPage))}
+                >
+                  {totalPage}
+                </span>
+              )}
+            </div>
+          )}
+
           <button
             onClick={() => handleChangePage(true)}
             disabled={currentPage == totalPage}

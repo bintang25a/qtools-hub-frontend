@@ -125,13 +125,19 @@ export default function PlannerLayout() {
     setSidebarOpen(false);
 
     // eslint-disable-next-line
-  }, [location.pathname, currentPage, toggleSearch]);
+  }, [currentPage, toggleSearch]);
 
-  const handleChangePage = (up = true) => {
-    if (up) {
+  const handleChangePage = (position = true) => {
+    if (Number.isInteger(position)) {
+      setCurrentPage(Number(position));
+    } else if (position == true) {
       setCurrentPage(currentPage + 1);
-    } else {
+    } else if (position == false) {
       setCurrentPage(currentPage - 1);
+    } else if (currentPage === 1) {
+      setToggleSearch(!toggleSearch);
+    } else {
+      setCurrentPage(1);
     }
   };
 

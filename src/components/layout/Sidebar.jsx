@@ -35,7 +35,7 @@ export default function Sidebar({ user, setSidebarOpen }) {
 
   const styleCondition = (currentPath) => {
     const path = location.pathname;
-    console.log(path);
+
     if (path === `${currentPath}${rolePath[user?.role]}`) {
       return {
         backgroundColor: `var(--secondary)`,
