@@ -5,11 +5,13 @@ import Header from "../components/layout/Header";
 import styles from "../styles/Layout.module.css";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import LoadingJump from "../components/overlay/JumpLoading";
+import ConfirmModal from "../components/overlay/ConfirmModal";
 import InfoModal from "../components/overlay/InfoModal";
 import { me } from "../_services/auth";
+import { getUsers } from "../_services/user";
 import { getAssets } from "../_services/asset";
 import { getReports } from "../_services/report";
-import { getUsers } from "../_services/user";
+import { getTransactions } from "../_services/transaction";
 import Sidebar from "../components/layout/Sidebar";
 
 export default function PlannerLayout() {
@@ -25,9 +27,17 @@ export default function PlannerLayout() {
   const [infoModal, setInfoModal] = useState({
     isOpen: false,
     isError: false,
-    onClose: () => {},
     title: "",
     message: "",
+    onClose: () => {},
+  });
+
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onCancel: () => {},
+    onSubmit: () => {},
   });
 
   const [searchData, setSearchData] = useState({
@@ -39,6 +49,7 @@ export default function PlannerLayout() {
   const [users, setUsers] = useState([]);
   const [assets, setAssets] = useState([]);
   const [reports, setReports] = useState([]);
+  const [transactions, setTransactions] = useState([]);
 
   const [toggleSearch, setToggleSearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,6 +123,14 @@ export default function PlannerLayout() {
           setAssets(assetsData?.data);
           setTotalPage(assetsData?.total_page);
           setCurrentPage(assetsData?.current_page);
+        } else if (pathaname === "/planner/transactions") {
+          const [transactionsData] = await Promise.all([
+            getTransactions(query),
+          ]);
+
+          setTransactions(transactionsData?.data);
+          setTotalPage(transactionsData?.total_page);
+          setCurrentPage(transactionsData?.current_page);
         }
       } catch (error) {
         console.log(error);
@@ -152,6 +171,12 @@ export default function PlannerLayout() {
     setCurrentPage(1);
   };
 
+  const handleChangePath = (path, id) => {
+    navigate(`${path}`);
+
+    localStorage.setItem("data_id", id);
+  };
+
   if (isChecking) {
     return <LoadingJump />;
   }
@@ -172,21 +197,32 @@ export default function PlannerLayout() {
 
           <Outlet
             context={{
+              data: {
+                user,
+                users,
+                assets,
+                transactions,
+                reports,
+              },
               firstLoad: {
                 isChecking,
                 setIsChecking,
                 isFirstLoad,
                 setIsFirstLoad,
               },
-              data: { user, users, assets, reports },
               feature: {
                 totalPage,
                 currentPage,
                 setSearchData,
+                handleChangePath,
                 handleChangePage,
                 handleSearchSubmit,
               },
-              overlay: { setIsLoading, setInfoModal },
+              overlay: {
+                setIsLoading,
+                setInfoModal,
+                setConfirmModal,
+              },
             }}
           />
         </div>
@@ -199,9 +235,16 @@ export default function PlannerLayout() {
       <InfoModal
         isOpen={infoModal?.isOpen}
         isError={infoModal?.isError}
-        onClose={infoModal?.onClose}
         title={infoModal?.title}
         message={infoModal?.message}
+        onClose={infoModal?.onClose}
+      />
+      <ConfirmModal
+        isOpen={confirmModal?.isOpen}
+        title={confirmModal?.title}
+        message={confirmModal?.message}
+        onCancel={confirmModal?.onCancel}
+        onSubmit={confirmModal?.onSubmit}
       />
     </>
   );

@@ -10,8 +10,9 @@ import { useEffect, useState } from "react";
 import { FaEye, FaPencil } from "react-icons/fa6";
 
 export default function Dashboard() {
-  const { data, firstLoad, overlay } = useOutletContext();
+  const { data, firstLoad, overlay, feature } = useOutletContext();
 
+  const { handleChangePath, handleChangePage } = feature;
   const { setIsLoading } = overlay;
   const { assets, reports } = data;
 
@@ -24,6 +25,8 @@ export default function Dashboard() {
 
     if (!isFirstLoad) {
       setIsLoading(true);
+
+      handleChangePage("default");
     }
 
     // eslint-disable-next-line
@@ -139,10 +142,20 @@ export default function Dashboard() {
                   <td>{a?.description}</td>
                   <td>
                     <div className={styles.action}>
-                      <button title="View">
+                      <button
+                        title="View"
+                        onClick={() =>
+                          handleChangePath("assets/view", a?.asset_number)
+                        }
+                      >
                         <FaEye />
                       </button>
-                      <button title="Edit">
+                      <button
+                        title="Edit"
+                        onClick={() =>
+                          handleChangePath("assets/edit", a?.asset_number)
+                        }
+                      >
                         <FaPencil />
                       </button>
                     </div>
@@ -183,10 +196,20 @@ export default function Dashboard() {
                   <td>{a?.description}</td>
                   <td>
                     <div className={styles.action}>
-                      <button title="View">
+                      <button
+                        title="View"
+                        onClick={() =>
+                          handleChangePath("assets/view", a?.asset_number)
+                        }
+                      >
                         <FaEye />
                       </button>
-                      <button title="Edit">
+                      <button
+                        title="Edit"
+                        onClick={() =>
+                          handleChangePath("assets/edit", a?.asset_number)
+                        }
+                      >
                         <FaPencil />
                       </button>
                     </div>
@@ -233,10 +256,20 @@ export default function Dashboard() {
                   </td>
                   <td>
                     <div className={styles.action}>
-                      <button title="View">
+                      <button
+                        title="View"
+                        onClick={() =>
+                          handleChangePath("reports/view", r?.report_id)
+                        }
+                      >
                         <FaEye />
                       </button>
-                      <button title="Edit">
+                      <button
+                        title="Edit"
+                        onClick={() =>
+                          handleChangePath("assets/edit", r?.report_id)
+                        }
+                      >
                         <FaPencil />
                       </button>
                     </div>

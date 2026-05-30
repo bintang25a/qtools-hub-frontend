@@ -4,6 +4,7 @@ import PlannerLayout from "./layouts/PlannerLayout";
 import Dashboard from "./pages/planner";
 import Users from "./pages/planner/Users";
 import Asset from "./pages/planner/Asset";
+import Transactions from "./pages/planner/Transactions";
 
 export default function App() {
   return (
@@ -16,10 +17,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="assets" element={<Asset />} />
-          <Route
-            path="transactions"
-            element={<main>Transactions Page Coming Soon</main>}
-          />
+          <Route path="transactions" element={<Transactions />} />
           <Route
             path="repairs"
             element={<main>Repairs Page Coming Soon</main>}

@@ -13,11 +13,11 @@ import {
 } from "react-icons/fa6";
 import { deleteAsset } from "../../_services/asset";
 
-export default function Asset() {
+export default function Transactions() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
   const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
-  const { assets } = data;
+  const { transactions } = data;
   const {
     totalPage,
     currentPage,
@@ -49,7 +49,7 @@ export default function Asset() {
 
     let conditionTimeout;
 
-    if (assets) {
+    if (transactions) {
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -67,7 +67,7 @@ export default function Asset() {
     };
 
     // eslint-disable-next-line
-  }, [assets]);
+  }, [transactions]);
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
@@ -163,36 +163,36 @@ export default function Asset() {
           <table>
             <thead>
               <tr>
-                <th>Asset Number</th>
-                <th>Class</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Location</th>
-                <th>Creator</th>
+                <th>Transaction ID</th>
+                <th>Mechanic ID</th>
+                <th>Asset ID</th>
+                <th>Needs</th>
+                <th>Loan Date</th>
+                <th>Return Date</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {assets?.length === 0 ? (
+              {transactions?.length === 0 ? (
                 <tr>
                   <td colSpan={7}>No Assets</td>
                 </tr>
               ) : null}
 
-              {assets?.map((a) => (
-                <tr key={a?.asset_number}>
-                  <td>{a?.asset_number}</td>
-                  <td>{a?.class}</td>
-                  <td>{a?.description}</td>
-                  <td>{a?.status}</td>
-                  <td>{a?.location}</td>
-                  <td>{a?.creator}</td>
+              {transactions?.map((t) => (
+                <tr key={t?.transaction_id}>
+                  <td>{t?.transaction_id}</td>
+                  <td>{t?.user_id}</td>
+                  <td>{t?.asset_id}</td>
+                  <td>{t?.loan_needs}</td>
+                  <td>{t?.loantAt}</td>
+                  <td>{t?.returnAt}</td>
                   <td>
                     <div className={styles.action}>
                       <button
                         title="View"
                         onClick={() =>
-                          handleChangePath("assets/view", a?.asset_number)
+                          handleChangePath("assets/view", t?.transaction_id)
                         }
                       >
                         <FaEye />
@@ -200,14 +200,14 @@ export default function Asset() {
                       <button
                         title="Edit"
                         onClick={() =>
-                          handleChangePath("assets/edit", a?.asset_number)
+                          handleChangePath("assets/edit", t?.transaction_id)
                         }
                       >
                         <FaPencil />
                       </button>
                       <button
                         title="Delete"
-                        onClick={() => handleDelete(a?.asset_number)}
+                        onClick={() => handleDelete(t?.transaction_id)}
                       >
                         <FaTrash />
                       </button>

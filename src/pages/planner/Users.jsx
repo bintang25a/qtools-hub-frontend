@@ -10,17 +10,19 @@ import {
   FaTrash,
   FaUser,
 } from "react-icons/fa6";
+import { deleteUser } from "../../_services/user";
 
 export default function Users() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
-  const { setIsLoading } = overlay;
+  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
   const { users } = data;
   const {
     totalPage,
     currentPage,
     setSearchData,
     handleChangePage,
+    handleChangePath,
     handleSearchSubmit,
   } = feature;
 
@@ -73,6 +75,53 @@ export default function Users() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleDelete = (id) => {
+    const onClose = (isError) => {
+      setInfoModal((prev) => ({ ...prev, isOpen: false }));
+
+      if (!isError) {
+        handleChangePage("default");
+      }
+    };
+
+    const onSubmit = async () => {
+      setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+
+      try {
+        setIsLoading(false);
+
+        await deleteUser(id);
+
+        setInfoModal({
+          isOpen: true,
+          title: "Successfully",
+          message: `Delete user with id ${id} successfully`,
+          onClose: () => onClose(false),
+        });
+      } catch (error) {
+        console.log(error?.message);
+
+        setInfoModal({
+          isOpen: true,
+          isError: true,
+          title: "Failed",
+          message: error?.message,
+          onClose: () => onClose(true),
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    setConfirmModal({
+      isOpen: true,
+      title: `Delete ${id}`,
+      message: "Are you sure to delete?",
+      onSubmit,
+      onCancel: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+    });
   };
 
   return (
@@ -131,13 +180,22 @@ export default function Users() {
                   <td>{u?.role}</td>
                   <td>
                     <div className={styles.action}>
-                      <button title="View">
+                      <button
+                        title="View"
+                        onClick={() => handleChangePath("users/view", u?.nrp)}
+                      >
                         <FaEye />
                       </button>
-                      <button title="Edit">
+                      <button
+                        title="Edit"
+                        onClick={() => handleChangePath("users/edit", u?.nrp)}
+                      >
                         <FaPencil />
                       </button>
-                      <button title="Delete">
+                      <button
+                        title="Delete"
+                        onClick={() => handleDelete(u?.nrp)}
+                      >
                         <FaTrash />
                       </button>
                     </div>
