@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "../../styles/Component.module.css";
-import { MdClose, MdSend } from "react-icons/md";
+import { MdClose } from "react-icons/md";
 import { FaPaperPlane } from "react-icons/fa6";
 import { getPhoto } from "../../_services/files";
 

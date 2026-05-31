@@ -8,21 +8,18 @@ import {
   FaMagnifyingGlass,
   FaPencil,
   FaPlus,
+  FaRegClipboard,
   FaTrash,
-  FaUser,
 } from "react-icons/fa6";
-import { deleteUser } from "../../_services/user";
-import {
-  addObject,
-  editObject,
-  viewObject,
-} from "../../_utilities/action/userObject";
+import { formatedDateFull } from "../../_utilities/formatedDate";
+import { deleteRepair } from "../../_services/repair";
+import { viewObject } from "../../_utilities/action/repairObject";
 
-export default function Users() {
+export default function Repair() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
   const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
-  const { users } = data;
+  const { repairs } = data;
   const {
     totalPage,
     currentPage,
@@ -54,7 +51,7 @@ export default function Users() {
 
     let conditionTimeout;
 
-    if (users) {
+    if (repairs) {
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -72,7 +69,7 @@ export default function Users() {
     };
 
     // eslint-disable-next-line
-  }, [users]);
+  }, [repairs]);
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
@@ -98,12 +95,12 @@ export default function Users() {
       try {
         setIsLoading(false);
 
-        await deleteUser(id);
+        await deleteRepair(id);
 
         setInfoModal({
           isOpen: true,
           title: "Successfully",
-          message: `Delete user with id ${id} successfully`,
+          message: `Delete repair with id ${id} successfully`,
           onClose: () => onClose(false),
         });
       } catch (error) {
@@ -134,7 +131,7 @@ export default function Users() {
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaUser className={styles.titleIcon} /> Users Data
+          <FaRegClipboard className={styles.titleIcon} /> Repair Data
         </h1>
       </section>
 
@@ -151,9 +148,8 @@ export default function Users() {
 
             <select name="key" id="key" onChange={handleSearchChange}>
               <option value="">Search by</option>
-              <option value="nrp">NRP</option>
-              <option value="name">Name</option>
-              <option value="role">Role</option>
+              <option value="repair_id">Repair ID</option>
+              <option value="asset_id">Asset ID</option>
             </select>
 
             <button type="submit" title="Search">
@@ -162,9 +158,7 @@ export default function Users() {
 
             <button
               type="button"
-              onClick={() =>
-                handleChangePath({ path: "users/add", data: addObject })
-              }
+              onClick={() => handleChangePath("repairs/add")}
             >
               <FaPlus />
             </button>
@@ -175,32 +169,34 @@ export default function Users() {
           <table>
             <thead>
               <tr>
-                <th>NRP</th>
-                <th>Name</th>
-                <th>Role</th>
+                <th>Repair ID</th>
+                <th>Asset ID</th>
+                <th>Repair Date</th>
+                <th>Finish Date</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {users?.length === 0 ? (
+              {repairs?.length === 0 ? (
                 <tr>
-                  <td colSpan={4}>No Users</td>
+                  <td colSpan={7}>No repairs right now</td>
                 </tr>
               ) : null}
 
-              {users?.map((u) => (
-                <tr key={u?.nrp}>
-                  <td>{u?.nrp}</td>
-                  <td>{u?.name}</td>
-                  <td>{u?.role}</td>
+              {repairs?.map((r) => (
+                <tr key={r?.repair_id}>
+                  <td>{r?.repair_id}</td>
+                  <td>{r?.asset_id}</td>
+                  <td>{formatedDateFull(r?.repairAt)}</td>
+                  <td>{formatedDateFull(r?.finishAt)}</td>
                   <td>
                     <div className={styles.action}>
                       <button
                         title="View"
                         onClick={() =>
                           handleChangePath({
-                            path: "users/view",
-                            data: { ...viewObject, id: u?.nrp },
+                            path: "repairs/view",
+                            data: { ...viewObject, id: r?.repair_id },
                           })
                         }
                       >
@@ -209,17 +205,14 @@ export default function Users() {
                       <button
                         title="Edit"
                         onClick={() =>
-                          handleChangePath({
-                            path: "users/edit",
-                            data: { ...editObject, id: u?.nrp },
-                          })
+                          handleChangePath("repairs/edit", r?.repair_id)
                         }
                       >
                         <FaPencil />
                       </button>
                       <button
                         title="Delete"
-                        onClick={() => handleDelete(u?.nrp)}
+                        onClick={() => handleDelete(r?.repair_id)}
                       >
                         <FaTrash />
                       </button>

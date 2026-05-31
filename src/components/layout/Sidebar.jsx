@@ -94,7 +94,7 @@ export default function Sidebar({ user, setSidebarOpen }) {
           className={styles.navItem}
           style={styleCondition("transactions")}
         >
-          <FaClipboardList /> <span>Asset Loan</span>
+          <FaClipboardList /> <span>Borrowing Assets</span>
         </Link>
         <Link
           to={`/${rolePath[user?.role]}/repairs`}

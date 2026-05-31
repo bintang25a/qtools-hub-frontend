@@ -8,6 +8,8 @@ import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaEye, FaPencil } from "react-icons/fa6";
+import { viewObject as assetObj } from "../../_utilities/action/assetObject";
+import { viewObject as reportObj } from "../../_utilities/action/ReportObject";
 
 export default function Dashboard() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
@@ -145,18 +147,13 @@ export default function Dashboard() {
                       <button
                         title="View"
                         onClick={() =>
-                          handleChangePath("assets/view", a?.asset_number)
+                          handleChangePath({
+                            path: "assets/view",
+                            data: { ...assetObj, id: a?.asset_number },
+                          })
                         }
                       >
                         <FaEye />
-                      </button>
-                      <button
-                        title="Edit"
-                        onClick={() =>
-                          handleChangePath("assets/edit", a?.asset_number)
-                        }
-                      >
-                        <FaPencil />
                       </button>
                     </div>
                   </td>
@@ -199,18 +196,13 @@ export default function Dashboard() {
                       <button
                         title="View"
                         onClick={() =>
-                          handleChangePath("assets/view", a?.asset_number)
+                          handleChangePath({
+                            path: "assets/view",
+                            data: { ...assetObj, id: a?.asset_number },
+                          })
                         }
                       >
                         <FaEye />
-                      </button>
-                      <button
-                        title="Edit"
-                        onClick={() =>
-                          handleChangePath("assets/edit", a?.asset_number)
-                        }
-                      >
-                        <FaPencil />
                       </button>
                     </div>
                   </td>
@@ -259,18 +251,13 @@ export default function Dashboard() {
                       <button
                         title="View"
                         onClick={() =>
-                          handleChangePath("reports/view", r?.report_id)
+                          handleChangePath({
+                            path: "reports/view",
+                            data: { ...reportObj, id: r?.report_id },
+                          })
                         }
                       >
                         <FaEye />
-                      </button>
-                      <button
-                        title="Edit"
-                        onClick={() =>
-                          handleChangePath("assets/edit", r?.report_id)
-                        }
-                      >
-                        <FaPencil />
                       </button>
                     </div>
                   </td>

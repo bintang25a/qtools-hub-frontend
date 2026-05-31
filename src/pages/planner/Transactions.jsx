@@ -4,14 +4,19 @@ import { useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
+  FaClipboardList,
   FaEye,
   FaMagnifyingGlass,
   FaPencil,
+  FaPlus,
   FaTrash,
-  FaUser,
-  FaWrench,
 } from "react-icons/fa6";
-import { deleteAsset } from "../../_services/asset";
+import { formatedDateFull } from "../../_utilities/formatedDate";
+import { deleteTransaction } from "../../_services/transaction";
+import {
+  editObject,
+  viewObject,
+} from "../../_utilities/action/transactionObject";
 
 export default function Transactions() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
@@ -93,12 +98,12 @@ export default function Transactions() {
       try {
         setIsLoading(false);
 
-        await deleteAsset(id);
+        await deleteTransaction(id);
 
         setInfoModal({
           isOpen: true,
           title: "Successfully",
-          message: `Delete user with id ${id} successfully`,
+          message: `Delete transaction with id ${id} successfully`,
           onClose: () => onClose(false),
         });
       } catch (error) {
@@ -129,7 +134,7 @@ export default function Transactions() {
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaWrench className={styles.titleIcon} /> Asset Data
+          <FaClipboardList className={styles.titleIcon} /> Borrowing Assets Data
         </h1>
       </section>
 
@@ -146,15 +151,21 @@ export default function Transactions() {
 
             <select name="key" id="key" onChange={handleSearchChange}>
               <option value="">Search by</option>
-              <option value="asset_number">Asset Number</option>
-              <option value="class">Class</option>
-              <option value="status">Status</option>
-              <option value="location">Location</option>
-              <option value="creator">Creator</option>
+              <option value="transaction_id">Transaction ID</option>
+              <option value="user_id">Mechanic ID</option>
+              <option value="asset_id">Asset ID</option>
+              <option value="loan_need">Needs</option>
             </select>
 
             <button type="submit" title="Search">
               <FaMagnifyingGlass />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleChangePath("transactions/add")}
+            >
+              <FaPlus />
             </button>
           </div>
         </form>
@@ -184,15 +195,18 @@ export default function Transactions() {
                   <td>{t?.transaction_id}</td>
                   <td>{t?.user_id}</td>
                   <td>{t?.asset_id}</td>
-                  <td>{t?.loan_needs}</td>
-                  <td>{t?.loantAt}</td>
-                  <td>{t?.returnAt}</td>
+                  <td content="text">{t?.loan_needs}</td>
+                  <td>{formatedDateFull(t?.loanAt)}</td>
+                  <td>{formatedDateFull(t?.returnAt)}</td>
                   <td>
                     <div className={styles.action}>
                       <button
                         title="View"
                         onClick={() =>
-                          handleChangePath("assets/view", t?.transaction_id)
+                          handleChangePath({
+                            path: "transactions/view",
+                            data: { ...viewObject, id: t?.transaction_id },
+                          })
                         }
                       >
                         <FaEye />
@@ -200,7 +214,10 @@ export default function Transactions() {
                       <button
                         title="Edit"
                         onClick={() =>
-                          handleChangePath("assets/edit", t?.transaction_id)
+                          handleChangePath({
+                            path: "transactions/edit",
+                            data: { ...editObject, id: t?.transaction_id },
+                          })
                         }
                       >
                         <FaPencil />

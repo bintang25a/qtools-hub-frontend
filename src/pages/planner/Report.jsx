@@ -4,25 +4,21 @@ import { useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
+  FaClipboardQuestion,
   FaEye,
   FaMagnifyingGlass,
   FaPencil,
   FaPlus,
   FaTrash,
-  FaUser,
 } from "react-icons/fa6";
-import { deleteUser } from "../../_services/user";
-import {
-  addObject,
-  editObject,
-  viewObject,
-} from "../../_utilities/action/userObject";
+import { deleteReport } from "../../_services/report";
+import { viewObject } from "../../_utilities/action/ReportObject";
 
-export default function Users() {
+export default function Report() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
   const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
-  const { users } = data;
+  const { reports } = data;
   const {
     totalPage,
     currentPage,
@@ -54,7 +50,7 @@ export default function Users() {
 
     let conditionTimeout;
 
-    if (users) {
+    if (reports) {
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -72,7 +68,7 @@ export default function Users() {
     };
 
     // eslint-disable-next-line
-  }, [users]);
+  }, [reports]);
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
@@ -98,12 +94,12 @@ export default function Users() {
       try {
         setIsLoading(false);
 
-        await deleteUser(id);
+        await deleteReport(id);
 
         setInfoModal({
           isOpen: true,
           title: "Successfully",
-          message: `Delete user with id ${id} successfully`,
+          message: `Delete report with id ${id} successfully`,
           onClose: () => onClose(false),
         });
       } catch (error) {
@@ -134,7 +130,7 @@ export default function Users() {
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaUser className={styles.titleIcon} /> Users Data
+          <FaClipboardQuestion className={styles.titleIcon} /> Report Data
         </h1>
       </section>
 
@@ -151,9 +147,10 @@ export default function Users() {
 
             <select name="key" id="key" onChange={handleSearchChange}>
               <option value="">Search by</option>
-              <option value="nrp">NRP</option>
-              <option value="name">Name</option>
-              <option value="role">Role</option>
+              <option value="report_id">Report ID</option>
+              <option value="reporter_id">Reporter ID</option>
+              <option value="asset_id">Asset ID</option>
+              <option value="description">Description</option>
             </select>
 
             <button type="submit" title="Search">
@@ -162,9 +159,7 @@ export default function Users() {
 
             <button
               type="button"
-              onClick={() =>
-                handleChangePath({ path: "users/add", data: addObject })
-              }
+              onClick={() => handleChangePath("reports/add")}
             >
               <FaPlus />
             </button>
@@ -175,32 +170,33 @@ export default function Users() {
           <table>
             <thead>
               <tr>
-                <th>NRP</th>
-                <th>Name</th>
-                <th>Role</th>
+                <th>Report ID</th>
+                <th>Reporter ID</th>
+                <th>Asset ID</th>
+                <th>Description</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {users?.length === 0 ? (
+              {reports?.length === 0 ? (
                 <tr>
-                  <td colSpan={4}>No Users</td>
+                  <td colSpan={5}>No reports right now</td>
                 </tr>
               ) : null}
 
-              {users?.map((u) => (
-                <tr key={u?.nrp}>
-                  <td>{u?.nrp}</td>
-                  <td>{u?.name}</td>
-                  <td>{u?.role}</td>
+              {reports?.map((r) => (
+                <tr key={r?.report_id}>
+                  <td>{r?.report_id}</td>
+                  <td>{r?.reporter_id}</td>
+                  <td>{r?.asset_id}</td>
                   <td>
                     <div className={styles.action}>
                       <button
                         title="View"
                         onClick={() =>
                           handleChangePath({
-                            path: "users/view",
-                            data: { ...viewObject, id: u?.nrp },
+                            path: "reports/view",
+                            data: { ...viewObject, id: r?.report_id },
                           })
                         }
                       >
@@ -209,17 +205,14 @@ export default function Users() {
                       <button
                         title="Edit"
                         onClick={() =>
-                          handleChangePath({
-                            path: "users/edit",
-                            data: { ...editObject, id: u?.nrp },
-                          })
+                          handleChangePath("reports/edit", r?.report_id)
                         }
                       >
                         <FaPencil />
                       </button>
                       <button
                         title="Delete"
-                        onClick={() => handleDelete(u?.nrp)}
+                        onClick={() => handleDelete(r?.report_id)}
                       >
                         <FaTrash />
                       </button>

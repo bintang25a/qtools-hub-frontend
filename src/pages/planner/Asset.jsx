@@ -7,11 +7,12 @@ import {
   FaEye,
   FaMagnifyingGlass,
   FaPencil,
+  FaPlus,
   FaTrash,
-  FaUser,
   FaWrench,
 } from "react-icons/fa6";
 import { deleteAsset } from "../../_services/asset";
+import { viewObject } from "../../_utilities/action/assetObject";
 
 export default function Asset() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
@@ -98,7 +99,7 @@ export default function Asset() {
         setInfoModal({
           isOpen: true,
           title: "Successfully",
-          message: `Delete user with id ${id} successfully`,
+          message: `Delete asset with id ${id} successfully`,
           onClose: () => onClose(false),
         });
       } catch (error) {
@@ -156,6 +157,13 @@ export default function Asset() {
             <button type="submit" title="Search">
               <FaMagnifyingGlass />
             </button>
+
+            <button
+              type="button"
+              onClick={() => handleChangePath("assets/add")}
+            >
+              <FaPlus />
+            </button>
           </div>
         </form>
 
@@ -192,7 +200,10 @@ export default function Asset() {
                       <button
                         title="View"
                         onClick={() =>
-                          handleChangePath("assets/view", a?.asset_number)
+                          handleChangePath({
+                            path: "assets/view",
+                            data: { ...viewObject, id: a?.asset_number },
+                          })
                         }
                       >
                         <FaEye />

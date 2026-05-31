@@ -11,6 +11,7 @@ import { me } from "../_services/auth";
 import { getUsers } from "../_services/user";
 import { getAssets } from "../_services/asset";
 import { getReports } from "../_services/report";
+import { getRepairs } from "../_services/repair";
 import { getTransactions } from "../_services/transaction";
 import Sidebar from "../components/layout/Sidebar";
 
@@ -49,6 +50,7 @@ export default function PlannerLayout() {
   const [users, setUsers] = useState([]);
   const [assets, setAssets] = useState([]);
   const [reports, setReports] = useState([]);
+  const [repairs, setRepairs] = useState([]);
   const [transactions, setTransactions] = useState([]);
 
   const [toggleSearch, setToggleSearch] = useState(false);
@@ -115,13 +117,13 @@ export default function PlannerLayout() {
           const [usersData] = await Promise.all([getUsers(query)]);
 
           setUsers(usersData?.data);
-          setTotalPage(usersData?.total_page);
+          setTotalPage(usersData?.total_page || 1);
           setCurrentPage(usersData?.current_page);
         } else if (pathaname === "/planner/assets") {
           const [assetsData] = await Promise.all([getAssets(query)]);
 
           setAssets(assetsData?.data);
-          setTotalPage(assetsData?.total_page);
+          setTotalPage(assetsData?.total_page || 1);
           setCurrentPage(assetsData?.current_page);
         } else if (pathaname === "/planner/transactions") {
           const [transactionsData] = await Promise.all([
@@ -129,8 +131,20 @@ export default function PlannerLayout() {
           ]);
 
           setTransactions(transactionsData?.data);
-          setTotalPage(transactionsData?.total_page);
+          setTotalPage(transactionsData?.total_page || 1);
           setCurrentPage(transactionsData?.current_page);
+        } else if (pathaname === "/planner/repairs") {
+          const [repairsData] = await Promise.all([getRepairs(query)]);
+
+          setRepairs(repairsData?.data);
+          setTotalPage(repairsData?.total_page);
+          setCurrentPage(repairsData?.current_page);
+        } else if (pathaname === "/planner/reports") {
+          const [reportsData] = await Promise.all([getReports(query)]);
+
+          setReports(reportsData?.data);
+          setTotalPage(reportsData?.total_page || 1);
+          setCurrentPage(reportsData?.current_page);
         }
       } catch (error) {
         console.log(error);
@@ -171,10 +185,8 @@ export default function PlannerLayout() {
     setCurrentPage(1);
   };
 
-  const handleChangePath = (path, id) => {
-    navigate(`${path}`);
-
-    localStorage.setItem("data_id", id);
+  const handleChangePath = ({ path, data = null }) => {
+    navigate(`${path}`, { state: data });
   };
 
   if (isChecking) {
@@ -203,6 +215,7 @@ export default function PlannerLayout() {
                 assets,
                 transactions,
                 reports,
+                repairs,
               },
               firstLoad: {
                 isChecking,
