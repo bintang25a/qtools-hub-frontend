@@ -41,7 +41,7 @@ export default function Dashboard() {
 
     if (assets && reports) {
       setTotalAssets(assets?.length);
-      setRepairs(assets?.filter((a) => a?.status === "RP"));
+      setRepairs(assets?.filter((a) => a?.status === "REPAIR"));
       setBorrows(assets?.filter((a) => a?.status === "NA"));
 
       conditionTimeout = setTimeout(() => {

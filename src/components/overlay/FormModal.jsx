@@ -49,7 +49,7 @@ export default function FormModal({ fields, data, onSubmit, onClose, isView }) {
                       onChange={handleChange}
                       value={formData[field?.name]}
                       required
-                      disabled={isView}
+                      disabled={isView || field?.disabled}
                     >
                       <option value="">{field?.label}</option>
                       {field?.options?.map((option, i) => (
@@ -82,7 +82,7 @@ export default function FormModal({ fields, data, onSubmit, onClose, isView }) {
                           field?.name === "password") &&
                         !data
                       }
-                      disabled={isView}
+                      disabled={isView || field?.disabled}
                     />
                   </>
                 )}

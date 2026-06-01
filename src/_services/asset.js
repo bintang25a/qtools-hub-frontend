@@ -27,7 +27,7 @@ export const createAsset = async (data) => {
 
 export const updateAsset = async (id, data) => {
   try {
-    const response = await API.post(`assets/${id}`, data);
+    const response = await API.patch(`assets/${id}`, data);
     return response.data;
   } catch (error) {
     console.log(error);

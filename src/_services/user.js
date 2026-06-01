@@ -27,7 +27,7 @@ export const createUser = async (data) => {
 
 export const updateUser = async (id, data) => {
   try {
-    const response = await API.post(`users/${id}`, data);
+    const response = await API.patch(`users/${id}`, data);
     return response.data;
   } catch (error) {
     console.log(error);

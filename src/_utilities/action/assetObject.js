@@ -1,24 +1,97 @@
-export const addObject = {
-  totalSection: 1,
-  keys: [
-    {
-      key: "nrp",
-      label: "NRP",
-    },
-    {
-      key: "name",
-      label: "Name",
-    },
-    {
-      key: "role",
-      label: "Role",
-    },
-  ],
-};
+export const addObject = [
+  {
+    name: "asset_number",
+    label: "Asset Number",
+    placeholder: "Input Asset Number",
+  },
+  {
+    name: "class",
+    label: "Class",
+    placeholder: "Input Class Type",
+  },
+  {
+    name: "creator",
+    label: "Creator",
+    placeholder: "Input Creator",
+  },
+  {
+    name: "description",
+    label: "Description",
+    placeholder: "Asset Description",
+  },
+  {
+    name: "location",
+    label: "Location",
+    placeholder: "Asset Location",
+  },
+  {
+    name: "status",
+    label: "Status",
+    type: "select",
+    options: [
+      {
+        value: "AV",
+        name: "Available",
+      },
+      {
+        value: "REPAIR",
+        name: "Under Repair/Maintance",
+      },
+      {
+        value: "NA",
+        name: "Not Available",
+      },
+    ],
+  },
+];
 
-export const editObject = {
-  sections: [],
-};
+export const editObject = [
+  {
+    name: "asset_number",
+    label: "Asset Number",
+    placeholder: "Input Asset Number",
+    disabled: true,
+  },
+  {
+    name: "class",
+    label: "Class",
+    placeholder: "Input Class Type",
+  },
+  {
+    name: "creator",
+    label: "Creator",
+    placeholder: "Input Creator",
+  },
+  {
+    name: "description",
+    label: "Description",
+    placeholder: "Asset Description",
+  },
+  {
+    name: "location",
+    label: "Location",
+    placeholder: "Asset Location",
+  },
+  {
+    name: "status",
+    label: "Status",
+    type: "select",
+    options: [
+      {
+        value: "AV",
+        name: "Available",
+      },
+      {
+        value: "REPAIR",
+        name: "Under Repair/Maintance",
+      },
+      {
+        value: "NA",
+        name: "Not Available",
+      },
+    ],
+  },
+];
 
 export const viewObject = {
   sections: [

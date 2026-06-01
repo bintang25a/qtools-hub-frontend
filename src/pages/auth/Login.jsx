@@ -30,13 +30,14 @@ export default function Login() {
       try {
         const { data } = await me();
 
-        const path = {
+        const convPath = {
           planner: "planner",
           "tool keeper": "toolkeeper",
-          mechanic: "mechanic",
         };
 
-        navigate(`/${path[data?.role]}`, { replace: true });
+        const path = convPath[data?.role] ? convPath[data?.role] : "/";
+
+        navigate(`/${path}`, { replace: true });
       } catch (error) {
         console.log(error);
 
@@ -68,13 +69,14 @@ export default function Login() {
     try {
       const res = await login(formData);
 
-      const path = {
+      const convPath = {
         planner: "planner",
         "tool keeper": "toolkeeper",
-        mechanic: "mechanic",
       };
 
-      navigate(`/${path[res?.role]}`, { replace: true });
+      const path = convPath[res?.role] ? convPath[res?.role] : "/";
+
+      navigate(`/${path}`, { replace: true });
     } catch (error) {
       console.log(error);
     } finally {

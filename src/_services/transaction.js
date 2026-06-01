@@ -27,7 +27,7 @@ export const createTransaction = async (data) => {
 
 export const updateTransaction = async (id, data) => {
   try {
-    const response = await API.post(`transactions/${id}`, data);
+    const response = await API.patch(`transactions/${id}`, data);
     return response.data;
   } catch (error) {
     console.log(error);

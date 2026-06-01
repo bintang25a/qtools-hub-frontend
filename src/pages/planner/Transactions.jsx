@@ -1,28 +1,25 @@
 import { useEffect } from "react";
 import styles from "../../styles/Planner.module.css";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
   FaClipboardList,
   FaEye,
   FaMagnifyingGlass,
-  FaPencil,
   FaPlus,
   FaTrash,
 } from "react-icons/fa6";
 import { formatedDateFull } from "../../_utilities/formatedDate";
 import { deleteTransaction } from "../../_services/transaction";
-import {
-  editObject,
-  viewObject,
-} from "../../_utilities/action/transactionObject";
+import { viewObject } from "../../_utilities/action/transactionObject";
 
 export default function Transactions() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
+  const navigate = useNavigate();
 
-  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
   const { transactions } = data;
+  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
   const {
     totalPage,
     currentPage,
@@ -163,7 +160,7 @@ export default function Transactions() {
 
             <button
               type="button"
-              onClick={() => handleChangePath("transactions/add")}
+              onClick={() => navigate("/asset-transaction", { replace: true })}
             >
               <FaPlus />
             </button>
@@ -210,17 +207,6 @@ export default function Transactions() {
                         }
                       >
                         <FaEye />
-                      </button>
-                      <button
-                        title="Edit"
-                        onClick={() =>
-                          handleChangePath({
-                            path: "transactions/edit",
-                            data: { ...editObject, id: t?.transaction_id },
-                          })
-                        }
-                      >
-                        <FaPencil />
                       </button>
                       <button
                         title="Delete"

@@ -11,18 +11,23 @@ import {
   FaTrash,
   FaUser,
 } from "react-icons/fa6";
-import { deleteUser } from "../../_services/user";
+import {
+  createUser,
+  deleteUser,
+  showUser,
+  updateUser,
+} from "../../_services/user";
 import {
   addObject,
   editObject,
   viewObject,
 } from "../../_utilities/action/userObject";
 
-export default function Users() {
+export default function User() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
-  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
   const { users } = data;
+  const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
   const {
     totalPage,
     currentPage,
@@ -130,6 +135,78 @@ export default function Users() {
     });
   };
 
+  const handleAddEdit = async (id, isEdit) => {
+    const onClose = (reload, info) => {
+      if (!info) {
+        setInfoModal((prev) => ({ ...prev, isOpen: false }));
+      } else {
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+      }
+
+      if (reload) {
+        handleChangePage("default");
+      }
+    };
+
+    const onSubmit = async (e, formData) => {
+      e.preventDefault();
+      setIsLoading(true);
+
+      try {
+        const { success, message } = isEdit
+          ? await updateUser(id, formData)
+          : await createUser(formData);
+
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+
+        setInfoModal({
+          isOpen: true,
+          title: `Success: ${success}`,
+          message: message,
+          onClose: () => onClose(true),
+        });
+      } catch (error) {
+        console.log(error);
+
+        setInfoModal({
+          isOpen: true,
+          isError: true,
+          title: "Failed",
+          message: error?.message,
+          onClose: () => onClose(false),
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    try {
+      setIsLoading(true);
+
+      const { data } = isEdit ? await showUser(id) : {};
+
+      setIsLoading(false);
+
+      setFormModal({
+        isOpen: true,
+        fields: isEdit ? editObject : addObject,
+        data,
+        onSubmit,
+        onClose: () => onClose(false, true),
+      });
+    } catch (error) {
+      console.log(error);
+
+      setInfoModal({
+        isOpen: true,
+        isError: true,
+        title: "Failed",
+        message: error?.message,
+        onClose: () => onClose(false),
+      });
+    }
+  };
+
   return (
     <main className={styles.main}>
       <section className={styles.title}>
@@ -160,12 +237,7 @@ export default function Users() {
               <FaMagnifyingGlass />
             </button>
 
-            <button
-              type="button"
-              onClick={() =>
-                handleChangePath({ path: "users/add", data: addObject })
-              }
-            >
+            <button type="button" onClick={() => handleAddEdit()}>
               <FaPlus />
             </button>
           </div>
@@ -208,12 +280,7 @@ export default function Users() {
                       </button>
                       <button
                         title="Edit"
-                        onClick={() =>
-                          handleChangePath({
-                            path: "users/edit",
-                            data: { ...editObject, id: u?.nrp },
-                          })
-                        }
+                        onClick={() => handleAddEdit(u?.nrp, true)}
                       >
                         <FaPencil />
                       </button>

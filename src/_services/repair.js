@@ -27,7 +27,7 @@ export const createRepair = async (data) => {
 
 export const updateRepair = async (id, data) => {
   try {
-    const response = await API.post(`repairs/${id}`, data);
+    const response = await API.patch(`repairs/${id}`, data);
     return response.data;
   } catch (error) {
     console.log(error);

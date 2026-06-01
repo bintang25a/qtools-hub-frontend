@@ -27,7 +27,7 @@ export const createReport = async (data) => {
 
 export const updateReport = async (id, data) => {
   try {
-    const response = await API.post(`reports/${id}`, data);
+    const response = await API.path(`reports/${id}`, data);
     return response.data;
   } catch (error) {
     console.log(error);

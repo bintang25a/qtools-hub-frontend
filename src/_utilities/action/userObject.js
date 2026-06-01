@@ -1,24 +1,39 @@
-export const addObject = {
-  totalSection: 1,
-  keys: [
-    {
-      key: "nrp",
-      label: "NRP",
-    },
-    {
-      key: "name",
-      label: "Name",
-    },
-    {
-      key: "role",
-      label: "Role",
-    },
-  ],
-};
+export const addObject = [
+  {
+    name: "nrp",
+    label: "NRP",
+    placeholder: "Input NRP",
+  },
+  {
+    name: "name",
+    label: "Name",
+    placeholder: "Input Full Name",
+  },
+  {
+    name: "role",
+    label: "Role",
+    placeholder: "Input Role",
+  },
+];
 
-export const editObject = {
-  sections: [],
-};
+export const editObject = [
+  {
+    name: "nrp",
+    label: "NRP",
+    placeholder: "Input NRP",
+    disabled: true,
+  },
+  {
+    name: "name",
+    label: "Name",
+    placeholder: "Input Full Name",
+  },
+  {
+    name: "role",
+    label: "Role",
+    placeholder: "Input Role",
+  },
+];
 
 export const viewObject = {
   sections: [

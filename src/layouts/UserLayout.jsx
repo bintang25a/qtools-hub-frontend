@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import DynamicTechnoGrid from "../components/background/DynamicTechnoGrid";
-import Footer from "../components/layout/Footer";
-import Header from "../components/layout/Header";
 import styles from "../styles/Layout.module.css";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import LoadingJump from "../components/overlay/JumpLoading";
@@ -13,10 +11,10 @@ import { getAssets } from "../_services/asset";
 import { getReports } from "../_services/report";
 import { getRepairs } from "../_services/repair";
 import { getTransactions } from "../_services/transaction";
-import Sidebar from "../components/layout/Sidebar";
 import FormModal from "../components/overlay/FormModal";
+import BottomNavbar from "../components/layout/BottomNavbar";
 
-export default function PlannerLayout() {
+export default function UserLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -86,12 +84,15 @@ export default function PlannerLayout() {
         try {
           const res = await me();
 
-          if (res?.data?.role !== "planner") {
+          const condition =
+            res?.data?.role === "planner" || res?.data?.role === "tool keeper";
+
+          if (condition) {
             setInfoModal({
               isOpen: true,
               isError: true,
               title: "Unauthorized",
-              message: "Redirect to login",
+              message: "Redirect to actual path",
               onClose: onClose,
             });
           }
@@ -114,46 +115,10 @@ export default function PlannerLayout() {
 
         const query = queryArray?.join("&");
 
-        if (pathaname === "/planner") {
-          const [assetsData, reportsData] = await Promise.all([
-            getAssets("all=true"),
-            getReports("all=true"),
-          ]);
+        if (pathaname === "/asset-borrow") {
+          const [assetsData] = await Promise.all([getAssets("limit=50")]);
 
           setAssets(assetsData?.data);
-          setReports(reportsData?.data);
-        } else if (pathaname === "/planner/users") {
-          const [usersData] = await Promise.all([getUsers(query)]);
-
-          setUsers(usersData?.data);
-          setTotalPage(usersData?.total_page || 1);
-          setCurrentPage(usersData?.current_page);
-        } else if (pathaname === "/planner/assets") {
-          const [assetsData] = await Promise.all([getAssets(query)]);
-
-          setAssets(assetsData?.data);
-          setTotalPage(assetsData?.total_page || 1);
-          setCurrentPage(assetsData?.current_page);
-        } else if (pathaname === "/planner/transactions") {
-          const [transactionsData] = await Promise.all([
-            getTransactions(query),
-          ]);
-
-          setTransactions(transactionsData?.data);
-          setTotalPage(transactionsData?.total_page || 1);
-          setCurrentPage(transactionsData?.current_page);
-        } else if (pathaname === "/planner/repairs") {
-          const [repairsData] = await Promise.all([getRepairs(query)]);
-
-          setRepairs(repairsData?.data);
-          setTotalPage(repairsData?.total_page);
-          setCurrentPage(repairsData?.current_page);
-        } else if (pathaname === "/planner/reports") {
-          const [reportsData] = await Promise.all([getReports(query)]);
-
-          setReports(reportsData?.data);
-          setTotalPage(reportsData?.total_page || 1);
-          setCurrentPage(reportsData?.current_page);
         }
       } catch (error) {
         console.log(error);
@@ -205,17 +170,7 @@ export default function PlannerLayout() {
   return (
     <>
       <div className={styles.layout}>
-        <Header
-          user={user}
-          setSidebarOpen={setSidebarOpen}
-          hasNotifications={hasNotifications}
-        />
-
         <div className={styles.content}>
-          {sidebarOpen && (
-            <Sidebar user={user} setSidebarOpen={setSidebarOpen} />
-          )}
-
           <Outlet
             context={{
               data: {
@@ -250,7 +205,8 @@ export default function PlannerLayout() {
           />
         </div>
 
-        <Footer />
+        <BottomNavbar />
+        {/* <Footer /> */}
       </div>
 
       {isLoading && <LoadingJump />}
