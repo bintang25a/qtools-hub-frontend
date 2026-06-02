@@ -15,21 +15,20 @@ const QrScannerModal = ({ isOpen, onClose, onScanSuccess }) => {
         await scannerRef.current.start(
           {
             facingMode: "environment",
-            width: { ideal: 2560 },
-            height: { ideal: 1440 },
           },
           {
-            fps: 10,
+            fps: 30,
             qrbox: {
               width: 250,
               height: 250,
             },
+            aspectRatio: 1.0,
           },
           (decodedText) => {
             onScanSuccess(decodedText);
           },
-          (errorMessage) => {
-            console.log(errorMessage);
+          () => {
+            // Abaikan error scan per-frame
           }
         );
       } catch (err) {
@@ -47,13 +46,26 @@ const QrScannerModal = ({ isOpen, onClose, onScanSuccess }) => {
             await scannerRef.current.clear();
           }
         } catch (err) {
-          console.error(err);
+          console.error("Stop Scanner Error:", err);
         }
       };
 
       stopScanner();
     };
   }, [isOpen, onScanSuccess]);
+
+  const handleClose = async () => {
+    try {
+      if (scannerRef.current?.isScanning) {
+        await scannerRef.current.stop();
+        await scannerRef.current.clear();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -64,7 +76,7 @@ const QrScannerModal = ({ isOpen, onClose, onScanSuccess }) => {
 
         <div id="qr-reader" className={styles.camera} />
 
-        <button onClick={onClose}>Close Camera</button>
+        <button onClick={handleClose}>Close Camera</button>
       </div>
     </div>
   );

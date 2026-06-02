@@ -115,7 +115,7 @@ export default function UserLayout() {
 
         const query = queryArray?.join("&");
 
-        if (pathaname === "/asset-borrow") {
+        if (pathaname === "/asset-loan") {
           const [assetsData] = await Promise.all([getAssets("limit=50")]);
 
           setAssets(assetsData?.data);

@@ -21,7 +21,7 @@ export default function App() {
 
         <Route path="/" element={<UserLayout />}>
           <Route index element={<main>User Dashboard</main>} />
-          <Route path="asset-borrow" element={<AssetLoan />} />
+          <Route path="asset-loan" element={<AssetLoan />} />
           <Route path="asset-return" element={<main>Asset Return</main>} />
           <Route path="history" element={<main>History</main>} />
         </Route>

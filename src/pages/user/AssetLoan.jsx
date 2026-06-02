@@ -8,13 +8,22 @@ import {
   FaQrcode,
 } from "react-icons/fa6";
 import QrScannerModal from "../../components/overlay/QrScannerModal";
+import { createTransaction } from "../../_services/transaction";
 
 export default function AssetLoan() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
-  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
-  const { assets } = data;
+  const { setIsLoading, setInfoModal } = overlay;
+  const { assets, user } = data;
   const { setSearchData, handleChangePage } = feature;
+
+  const [openCamModal, setOpenCamModal] = useState(false);
+  const [autoSubmit, setAutoSubmit] = useState(false);
+
+  const [formData, setFormData] = useState({
+    loan_needs: "",
+    asset_id: "",
+  });
 
   useEffect(() => {
     const { isFirstLoad } = firstLoad;
@@ -30,6 +39,11 @@ export default function AssetLoan() {
       });
     }
 
+    const auto = localStorage.getItem("autoSubmit");
+    const isAutoSubmit = auto === "true";
+
+    setAutoSubmit(isAutoSubmit);
+
     // eslint-disable-next-line
   }, []);
 
@@ -38,7 +52,7 @@ export default function AssetLoan() {
 
     let conditionTimeout;
 
-    if (assets) {
+    if (assets && user) {
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -56,28 +70,29 @@ export default function AssetLoan() {
     };
 
     // eslint-disable-next-line
-  }, [assets]);
-
-  const [formData, setFormData] = useState({
-    loan_needs: "",
-    asset_id: "",
-  });
+  }, [assets, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    if (name === "autoSubmit") {
+      setAutoSubmit(!autoSubmit);
+
+      localStorage.setItem("autoSubmit", !autoSubmit);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
-  const filteredAsset = assets?.filter((a) =>
-    a?.asset_number?.toUpperCase()?.includes(formData?.asset_id?.toUpperCase())
-  );
-
-  const [openModal, setOpenModal] = useState(false);
-  const [qrResult, setQrResult] = useState("");
+  const filteredAsset =
+    assets?.filter((a) =>
+      a?.asset_number
+        ?.toUpperCase()
+        ?.includes(formData?.asset_id?.toUpperCase())
+    ) || [];
 
   const handleOpenCamera = async () => {
     try {
@@ -87,7 +102,7 @@ export default function AssetLoan() {
 
       stream.getTracks().forEach((track) => track.stop());
 
-      setOpenModal(true);
+      setOpenCamModal(true);
     } catch (error) {
       console.error(error);
       alert("Izin kamera ditolak");
@@ -95,10 +110,56 @@ export default function AssetLoan() {
   };
 
   const onScanSuccess = (value) => {
-    setQrResult(value);
+    setOpenCamModal(false);
 
-    setOpenModal(false);
-    alert(value);
+    setFormData({
+      ...formData,
+      asset_id: value,
+    });
+
+    if (autoSubmit) {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e?.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const payload = {
+        ...formData,
+        nrp: user?.nrp,
+        loanAt: new Date().toISOString(),
+      };
+
+      const res = await createTransaction(payload);
+
+      setInfoModal({
+        isOpen: true,
+        isError: false,
+        title: "Success",
+        message: res?.message,
+        onClose: () => setInfoModal((prev) => ({ ...prev, isOpen: false })),
+      });
+
+      setFormData({
+        loan_needs: "",
+        asset_id: "",
+      });
+    } catch (error) {
+      console.log(error?.message);
+
+      setInfoModal({
+        isOpen: true,
+        isError: true,
+        title: "Failed",
+        message: error?.message,
+        onClose: () => setInfoModal((prev) => ({ ...prev, isOpen: false })),
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -112,7 +173,7 @@ export default function AssetLoan() {
           Loan Form
         </h2>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className={styles.formContainer}>
             <div className={styles.inputContainer}>
               <label htmlFor="loan_needs">Needs</label>
@@ -138,19 +199,21 @@ export default function AssetLoan() {
                 required
               />
 
-              <div className={styles.assetContainer}>
-                {filteredAsset?.slice(0, 10)?.map((a) => (
-                  <button
-                    key={a?.asset_number}
-                    type="button"
-                    onClick={() =>
-                      setFormData({ ...formData, asset_id: a?.asset_number })
-                    }
-                  >
-                    {a?.asset_number}
-                  </button>
-                ))}
-              </div>
+              {filteredAsset?.length > 0 && (
+                <div className={styles.assetContainer}>
+                  {filteredAsset?.slice(0, 15)?.map((a) => (
+                    <button
+                      key={a?.asset_number}
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, asset_id: a?.asset_number })
+                      }
+                    >
+                      {a?.asset_number}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className={styles.inputContainer}>
@@ -165,9 +228,15 @@ export default function AssetLoan() {
 
             <div className={styles.inputContainer}>
               <label htmlFor="autoSubmit">Enable Auto Submit After Scan?</label>
-              <input type="checkbox" name="autoSubmit" id="autoSubmit" />
+              <input
+                type="checkbox"
+                name="autoSubmit"
+                id="autoSubmit"
+                onChange={handleChange}
+                checked={autoSubmit}
+              />
 
-              <button type="button" className={styles.submitBtn}>
+              <button type="submit" className={styles.submitBtn}>
                 Submit <FaPaperPlane />
               </button>
             </div>
@@ -176,8 +245,8 @@ export default function AssetLoan() {
       </section>
 
       <QrScannerModal
-        isOpen={openModal}
-        onClose={() => setOpenModal(false)}
+        isOpen={openCamModal}
+        onClose={() => setOpenCamModal(false)}
         onScanSuccess={onScanSuccess}
       />
     </main>
