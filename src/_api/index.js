@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL:
-    // "https://7b0a-2405-8180-401-7d68-3d58-b19c-b5bd-221b.ngrok-free.app/api",
-    "https://putting-sofa-closes-phenomenon.trycloudflare.com/api",
+  baseURL: "https://spend-advanced-excellent-viewing.trycloudflare.com/api",
+  // "https://putting-sofa-closes-phenomenon.trycloudflare.com/api",
   // "http://127.0.0.1:5000/api",
 });
 
