@@ -35,7 +35,7 @@ export default function Login() {
           "tool keeper": "toolkeeper",
         };
 
-        const path = convPath[data?.role] ? convPath[data?.role] : "/";
+        const path = convPath[data?.role] ? "/admin" : "/";
 
         navigate(`/${path}`, { replace: true });
       } catch (error) {
@@ -74,7 +74,7 @@ export default function Login() {
         "tool keeper": "toolkeeper",
       };
 
-      const path = convPath[res?.role] ? convPath[res?.role] : "/";
+      const path = convPath[res?.role] ? "/admin" : "/";
 
       navigate(`/${path}`, { replace: true });
     } catch (error) {

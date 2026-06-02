@@ -266,6 +266,7 @@
           text-wrap: nowrap;
           text-align: center;
           padding: var(--px-4) var(--px-8);
+          width: fit-content;
 
           .action {
             width: 100%;
@@ -311,6 +312,29 @@
             > button:active {
               transform: scale(0.9);
             }
+          }
+
+          > span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: var(--fs-4);
+            padding: var(--px-8) var(--px-16);
+            border-radius: 1000px;
+            color: var(--white);
+            box-shadow: 2px 1px 2px var(--gray-600);
+          }
+          > span[status="NA"],
+          > span[status="RUSAK"],
+          > span[status="BROKEN"] {
+            background-color: var(--btn-danger);
+          }
+          > span[status="AV"] {
+            background-color: var(--btn-save);
+          }
+          > span[status="REPAIR"] {
+            background-color: var(--btn-warning);
           }
         }
         > tbody > tr > td[content="text"] {

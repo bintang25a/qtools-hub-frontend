@@ -1,24 +1,33 @@
-export const addObject = {
-  totalSection: 1,
-  keys: [
-    {
-      key: "nrp",
-      label: "NRP",
-    },
-    {
-      key: "name",
-      label: "Name",
-    },
-    {
-      key: "role",
-      label: "Role",
-    },
-  ],
-};
-
-export const editObject = {
-  sections: [],
-};
+export const editObject = [
+  {
+    name: "transaction_id",
+    label: "Transaction ID",
+    disabled: true,
+  },
+  {
+    name: "user_id",
+    label: "User ID",
+  },
+  {
+    name: "asset_id",
+    label: "Asset Number",
+  },
+  {
+    name: "loan_needs",
+    label: "Needs",
+    type: "textarea",
+  },
+  {
+    name: "loanAt",
+    label: "Return Date",
+    type: "datetime-local",
+  },
+  {
+    name: "returnAt",
+    label: "Return Date",
+    type: "datetime-local",
+  },
+];
 
 export const viewObject = {
   sections: [

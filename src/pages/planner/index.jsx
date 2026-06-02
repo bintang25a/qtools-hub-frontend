@@ -1,4 +1,4 @@
-import styles from "../../styles/Planner.module.css";
+import styles from "../../styles/Admin.module.css";
 import {
   HiOutlineBriefcase,
   HiOutlineArrowCircleUp,
@@ -8,8 +8,8 @@ import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaEye, FaPencil } from "react-icons/fa6";
-import { viewObject as assetObj } from "../../_utilities/action/assetObject";
-import { viewObject as reportObj } from "../../_utilities/action/ReportObject";
+import { viewObject as assetObj } from "../../_utilities/actionObject/assetObject";
+import { viewObject as reportObj } from "../../_utilities/actionObject/reportObject";
 
 export default function Dashboard() {
   const { data, firstLoad, overlay, feature } = useOutletContext();

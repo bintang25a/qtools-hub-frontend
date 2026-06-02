@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import styles from "../../styles/Planner.module.css";
+import styles from "../../styles/Admin.module.css";
 import { useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -21,7 +21,7 @@ import {
   addObject,
   editObject,
   viewObject,
-} from "../../_utilities/action/assetObject";
+} from "../../_utilities/actionObject/assetObject";
 
 export default function Asset() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
@@ -232,7 +232,7 @@ export default function Asset() {
               <option value="class">Class</option>
               <option value="status">Status</option>
               <option value="location">Location</option>
-              <option value="creator">Creator</option>
+              <option value="district">District</option>
             </select>
 
             <button type="submit" title="Search">
@@ -252,9 +252,9 @@ export default function Asset() {
                 <th>Asset Number</th>
                 <th>Class</th>
                 <th>Description</th>
-                <th>Status</th>
+                <th>District</th>
                 <th>Location</th>
-                <th>Creator</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -270,9 +270,11 @@ export default function Asset() {
                   <td>{a?.asset_number}</td>
                   <td>{a?.class}</td>
                   <td>{a?.description}</td>
-                  <td>{a?.status}</td>
+                  <td>{a?.district}</td>
                   <td>{a?.location}</td>
-                  <td>{a?.creator}</td>
+                  <td>
+                    <span status={a?.status}>{a?.status}</span>
+                  </td>
                   <td>
                     <div className={styles.action}>
                       <button

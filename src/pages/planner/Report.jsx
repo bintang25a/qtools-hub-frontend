@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import styles from "../../styles/Planner.module.css";
+import styles from "../../styles/Admin.module.css";
 import { useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -11,13 +11,22 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa6";
-import { deleteReport } from "../../_services/report";
-import { viewObject } from "../../_utilities/action/ReportObject";
+import {
+  createReport,
+  deleteReport,
+  showReport,
+  updateReport,
+} from "../../_services/report";
+import {
+  addObject,
+  editObject,
+  viewObject,
+} from "../../_utilities/actionObject/reportObject";
 
 export default function Report() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
-  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
+  const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
   const { reports } = data;
   const {
     totalPage,
@@ -126,6 +135,78 @@ export default function Report() {
     });
   };
 
+  const handleAddEdit = async (id, isEdit) => {
+    const onClose = (reload, info) => {
+      if (!info) {
+        setInfoModal((prev) => ({ ...prev, isOpen: false }));
+      } else {
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+      }
+
+      if (reload) {
+        handleChangePage("default");
+      }
+    };
+
+    const onSubmit = async (e, formData) => {
+      e.preventDefault();
+      setIsLoading(true);
+
+      try {
+        const { success, message } = isEdit
+          ? await updateReport(id, formData)
+          : await createReport(formData);
+
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+
+        setInfoModal({
+          isOpen: true,
+          title: `Success: ${success}`,
+          message: message,
+          onClose: () => onClose(true),
+        });
+      } catch (error) {
+        console.log(error);
+
+        setInfoModal({
+          isOpen: true,
+          isError: true,
+          title: "Failed",
+          message: error?.message,
+          onClose: () => onClose(false),
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    try {
+      setIsLoading(true);
+
+      const { data } = isEdit ? await showReport(id) : {};
+
+      setIsLoading(false);
+
+      setFormModal({
+        isOpen: true,
+        fields: isEdit ? editObject : addObject,
+        data,
+        onSubmit,
+        onClose: () => onClose(false, true),
+      });
+    } catch (error) {
+      console.log(error);
+
+      setInfoModal({
+        isOpen: true,
+        isError: true,
+        title: "Failed",
+        message: error?.message,
+        onClose: () => onClose(false),
+      });
+    }
+  };
+
   return (
     <main className={styles.main}>
       <section className={styles.title}>
@@ -157,10 +238,7 @@ export default function Report() {
               <FaMagnifyingGlass />
             </button>
 
-            <button
-              type="button"
-              onClick={() => handleChangePath("reports/add")}
-            >
+            <button type="button" onClick={() => handleAddEdit()}>
               <FaPlus />
             </button>
           </div>
@@ -189,6 +267,7 @@ export default function Report() {
                   <td>{r?.report_id}</td>
                   <td>{r?.reporter_id}</td>
                   <td>{r?.asset_id}</td>
+                  <td text="true">{r?.description}</td>
                   <td>
                     <div className={styles.action}>
                       <button
@@ -204,9 +283,7 @@ export default function Report() {
                       </button>
                       <button
                         title="Edit"
-                        onClick={() =>
-                          handleChangePath("reports/edit", r?.report_id)
-                        }
+                        onClick={() => handleAddEdit(r?.report_id, true)}
                       >
                         <FaPencil />
                       </button>

@@ -1,24 +1,34 @@
-export const addObject = {
-  totalSection: 1,
-  keys: [
-    {
-      key: "nrp",
-      label: "NRP",
-    },
-    {
-      key: "name",
-      label: "Name",
-    },
-    {
-      key: "role",
-      label: "Role",
-    },
-  ],
-};
+export const addObject = [
+  {
+    name: "asset_id",
+    label: "Asset ID",
+  },
+  {
+    name: "description",
+    label: "Description",
+  },
+];
 
-export const editObject = {
-  sections: [],
-};
+export const editObject = [
+  {
+    name: "report_id",
+    label: "Report ID",
+    disabled: true,
+  },
+  {
+    name: "reporter_id",
+    label: "Reporter ID",
+    disabled: true,
+  },
+  {
+    name: "asset_id",
+    label: "Asset ID",
+  },
+  {
+    name: "description",
+    label: "Description",
+  },
+];
 
 export const viewObject = {
   sections: [

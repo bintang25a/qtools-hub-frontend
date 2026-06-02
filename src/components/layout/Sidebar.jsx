@@ -8,6 +8,7 @@ import {
   FaClipboardQuestion,
   FaHouse,
   FaRegClipboard,
+  FaToolbox,
   FaUser,
   FaWrench,
 } from "react-icons/fa6";
@@ -28,9 +29,8 @@ export default function Sidebar({ user, setSidebarOpen }) {
   };
 
   const rolePath = {
-    planner: "planner",
-    "tool keeper": "toolkeeper",
-    mechanic: "mechanic",
+    planner: "admin",
+    "tool keeper": "admin",
   };
 
   const styleCondition = (currentPath) => {
@@ -82,33 +82,41 @@ export default function Sidebar({ user, setSidebarOpen }) {
         >
           <FaUser /> <span>Users</span>
         </Link>
+
         <Link
           to={`/${rolePath[user?.role]}/assets`}
           className={styles.navItem}
           style={styleCondition("assets")}
         >
-          <FaWrench /> <span>Assets & Tools</span>
-        </Link>
-        <Link
-          to={`/${rolePath[user?.role]}/transactions`}
-          className={styles.navItem}
-          style={styleCondition("transactions")}
-        >
-          <FaClipboardList /> <span>Borrowing Assets</span>
+          <FaWrench /> <span>Tools & Assets</span>
         </Link>
         <Link
           to={`/${rolePath[user?.role]}/repairs`}
           className={styles.navItem}
           style={styleCondition("repairs")}
         >
-          <FaRegClipboard /> <span>Repair</span>
+          <FaRegClipboard /> <span>Historical Repair</span>
+        </Link>
+        <Link
+          to={`/${rolePath[user?.role]}/transactions`}
+          className={styles.navItem}
+          style={styleCondition("transactions")}
+        >
+          <FaClipboardList /> <span>Equipment loans</span>
         </Link>
         <Link
           to={`/${rolePath[user?.role]}/reports`}
           className={styles.navItem}
           style={styleCondition("reports")}
         >
-          <FaClipboardQuestion /> <span>Report</span>
+          <FaClipboardQuestion /> <span>BAKK</span>
+        </Link>
+        <Link
+          to={`/${rolePath[user?.role]}/inspections`}
+          className={styles.navItem}
+          style={styleCondition("inspections")}
+        >
+          <FaToolbox /> <span>Tool Box Inspections</span>
         </Link>
       </div>
 

@@ -1,24 +1,52 @@
-export const addObject = {
-  totalSection: 1,
-  keys: [
-    {
-      key: "nrp",
-      label: "NRP",
-    },
-    {
-      key: "name",
-      label: "Name",
-    },
-    {
-      key: "role",
-      label: "Role",
-    },
-  ],
-};
+export const addObject = [
+  {
+    name: "asset_id",
+    label: "Asset ID",
+    placeholder: "Input Asset ID",
+  },
+  {
+    name: "repairAt",
+    label: "Repair Date",
+    type: "datetime-local",
+  },
+  {
+    name: "finishAt",
+    label: "Return Date",
+    type: "datetime-local",
+  },
+  {
+    name: "notes",
+    label: "Repair Notes",
+    placeholder: "Make a notes about the equipment (tools or assets)",
+  },
+];
 
-export const editObject = {
-  sections: [],
-};
+export const editObject = [
+  {
+    name: "repair_id",
+    label: "Repair ID",
+    disabled: true,
+  },
+  {
+    name: "asset_id",
+    label: "Asset ID",
+    disabled: true,
+  },
+  {
+    name: "repairAt",
+    label: "Repair Date",
+    type: "datetime-local",
+  },
+  {
+    name: "finishAt",
+    label: "Return Date",
+    type: "datetime-local",
+  },
+  {
+    name: "notes",
+    label: "Repair Notes",
+  },
+];
 
 export const viewObject = {
   sections: [

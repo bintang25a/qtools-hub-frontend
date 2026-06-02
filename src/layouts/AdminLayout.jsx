@@ -86,7 +86,9 @@ export default function PlannerLayout() {
         try {
           const res = await me();
 
-          if (res?.data?.role !== "planner") {
+          const role = res?.data?.role?.toLowerCase();
+
+          if (role !== "planner" && role !== "tool keeper") {
             setInfoModal({
               isOpen: true,
               isError: true,
@@ -114,7 +116,7 @@ export default function PlannerLayout() {
 
         const query = queryArray?.join("&");
 
-        if (pathaname === "/planner") {
+        if (pathaname === "/admin") {
           const [assetsData, reportsData] = await Promise.all([
             getAssets("all=true"),
             getReports("all=true"),
@@ -122,19 +124,19 @@ export default function PlannerLayout() {
 
           setAssets(assetsData?.data);
           setReports(reportsData?.data);
-        } else if (pathaname === "/planner/users") {
+        } else if (pathaname === "/admin/users") {
           const [usersData] = await Promise.all([getUsers(query)]);
 
           setUsers(usersData?.data);
           setTotalPage(usersData?.total_page || 1);
           setCurrentPage(usersData?.current_page);
-        } else if (pathaname === "/planner/assets") {
+        } else if (pathaname === "/admin/assets") {
           const [assetsData] = await Promise.all([getAssets(query)]);
 
           setAssets(assetsData?.data);
           setTotalPage(assetsData?.total_page || 1);
           setCurrentPage(assetsData?.current_page);
-        } else if (pathaname === "/planner/transactions") {
+        } else if (pathaname === "/admin/transactions") {
           const [transactionsData] = await Promise.all([
             getTransactions(query),
           ]);
@@ -142,13 +144,13 @@ export default function PlannerLayout() {
           setTransactions(transactionsData?.data);
           setTotalPage(transactionsData?.total_page || 1);
           setCurrentPage(transactionsData?.current_page);
-        } else if (pathaname === "/planner/repairs") {
+        } else if (pathaname === "/admin/repairs") {
           const [repairsData] = await Promise.all([getRepairs(query)]);
 
           setRepairs(repairsData?.data);
           setTotalPage(repairsData?.total_page);
           setCurrentPage(repairsData?.current_page);
-        } else if (pathaname === "/planner/reports") {
+        } else if (pathaname === "/admin/reports") {
           const [reportsData] = await Promise.all([getReports(query)]);
 
           setReports(reportsData?.data);

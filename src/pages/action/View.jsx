@@ -13,11 +13,11 @@ import { showTransaction } from "../../_services/transaction";
 import { showRepair } from "../../_services/repair";
 import { showReport } from "../../_services/report";
 
-import { viewObject as userObj } from "../../_utilities/action/userObject";
-import { viewObject as assetObj } from "../../_utilities/action/assetObject";
-import { viewObject as transactionObj } from "../../_utilities/action/transactionObject";
-import { viewObject as repairObj } from "../../_utilities/action/repairObject";
-import { viewObject as reportObj } from "../../_utilities/action/ReportObject";
+import { viewObject as userObj } from "../../_utilities/actionObject/userObject";
+import { viewObject as assetObj } from "../../_utilities/actionObject/assetObject";
+import { viewObject as transactionObj } from "../../_utilities/actionObject/transactionObject";
+import { viewObject as repairObj } from "../../_utilities/actionObject/repairObject";
+import { viewObject as reportObj } from "../../_utilities/actionObject/reportObject";
 import { FaArrowLeft } from "react-icons/fa6";
 
 export default function View() {

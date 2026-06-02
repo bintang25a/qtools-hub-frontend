@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import styles from "../../styles/Planner.module.css";
+import styles from "../../styles/Admin.module.css";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -7,19 +7,27 @@ import {
   FaClipboardList,
   FaEye,
   FaMagnifyingGlass,
+  FaPencil,
   FaPlus,
   FaTrash,
 } from "react-icons/fa6";
 import { formatedDateFull } from "../../_utilities/formatedDate";
-import { deleteTransaction } from "../../_services/transaction";
-import { viewObject } from "../../_utilities/action/transactionObject";
+import {
+  deleteTransaction,
+  showTransaction,
+  updateTransaction,
+} from "../../_services/transaction";
+import {
+  editObject,
+  viewObject,
+} from "../../_utilities/actionObject/transactionObject";
 
 export default function Transactions() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
   const navigate = useNavigate();
 
   const { transactions } = data;
-  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
+  const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
   const {
     totalPage,
     currentPage,
@@ -127,11 +135,81 @@ export default function Transactions() {
     });
   };
 
+  const handleAdd = async (id) => {
+    const onClose = (reload, info) => {
+      if (!info) {
+        setInfoModal((prev) => ({ ...prev, isOpen: false }));
+      } else {
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+      }
+
+      if (reload) {
+        handleChangePage("default");
+      }
+    };
+
+    const onSubmit = async (e, formData) => {
+      e.preventDefault();
+      setIsLoading(true);
+
+      try {
+        const { success, message } = await updateTransaction(id, formData);
+
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+
+        setInfoModal({
+          isOpen: true,
+          title: `Success: ${success}`,
+          message: message,
+          onClose: () => onClose(true),
+        });
+      } catch (error) {
+        console.log(error);
+
+        setInfoModal({
+          isOpen: true,
+          isError: true,
+          title: "Failed",
+          message: error?.message,
+          onClose: () => onClose(false),
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    try {
+      setIsLoading(true);
+
+      const { data } = await showTransaction(id);
+
+      setIsLoading(false);
+
+      setFormModal({
+        isOpen: true,
+        fields: editObject,
+        data,
+        onSubmit,
+        onClose: () => onClose(false, true),
+      });
+    } catch (error) {
+      console.log(error);
+
+      setInfoModal({
+        isOpen: true,
+        isError: true,
+        title: "Failed",
+        message: error?.message,
+        onClose: () => onClose(false),
+      });
+    }
+  };
+
   return (
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaClipboardList className={styles.titleIcon} /> Borrowing Assets Data
+          <FaClipboardList className={styles.titleIcon} /> Equipment Loans Data
         </h1>
       </section>
 
@@ -160,7 +238,7 @@ export default function Transactions() {
 
             <button
               type="button"
-              onClick={() => navigate("/asset-transaction", { replace: true })}
+              onClick={() => navigate("/asset-loan", { replace: true })}
             >
               <FaPlus />
             </button>
@@ -194,7 +272,11 @@ export default function Transactions() {
                   <td>{t?.asset_id}</td>
                   <td content="text">{t?.loan_needs}</td>
                   <td>{formatedDateFull(t?.loanAt)}</td>
-                  <td>{formatedDateFull(t?.returnAt)}</td>
+                  <td>
+                    {formatedDateFull(t?.returnAt) || (
+                      <span status="NA">Not Returned</span>
+                    )}
+                  </td>
                   <td>
                     <div className={styles.action}>
                       <button
@@ -207,6 +289,12 @@ export default function Transactions() {
                         }
                       >
                         <FaEye />
+                      </button>
+                      <button
+                        title="Edit"
+                        onClick={() => handleAdd(t?.transaction_id)}
+                      >
+                        <FaPencil />
                       </button>
                       <button
                         title="Delete"

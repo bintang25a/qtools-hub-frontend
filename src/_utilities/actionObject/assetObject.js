@@ -10,9 +10,9 @@ export const addObject = [
     placeholder: "Input Class Type",
   },
   {
-    name: "creator",
-    label: "Creator",
-    placeholder: "Input Creator",
+    name: "district",
+    label: "District",
+    placeholder: "Input District",
   },
   {
     name: "description",
@@ -36,6 +36,10 @@ export const addObject = [
       {
         value: "REPAIR",
         name: "Under Repair/Maintance",
+      },
+      {
+        value: "BROKEN",
+        name: "Broken",
       },
       {
         value: "NA",
@@ -58,9 +62,9 @@ export const editObject = [
     placeholder: "Input Class Type",
   },
   {
-    name: "creator",
-    label: "Creator",
-    placeholder: "Input Creator",
+    name: "district",
+    label: "District",
+    placeholder: "Input District",
   },
   {
     name: "description",
@@ -84,6 +88,10 @@ export const editObject = [
       {
         value: "REPAIR",
         name: "Under Repair/Maintance",
+      },
+      {
+        value: "BROKEN",
+        name: "Broken",
       },
       {
         value: "NA",
@@ -108,8 +116,8 @@ export const viewObject = {
           label: "Class",
         },
         {
-          key: "creator",
-          label: "Creator",
+          key: "district",
+          label: "District",
         },
         {
           key: "description",

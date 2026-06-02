@@ -118,6 +118,11 @@
           cursor: pointer;
         }
 
+        > input:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
+
         .assetContainer {
           width: 100%;
 
@@ -174,6 +179,12 @@
         .submitBtn {
           background-color: var(--btn-save);
           color: var(--white);
+        }
+
+        button:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+          transform: scale(1);
         }
       }
     }

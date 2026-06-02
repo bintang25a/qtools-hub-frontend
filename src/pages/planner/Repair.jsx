@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import styles from "../../styles/Planner.module.css";
+import styles from "../../styles/Admin.module.css";
 import { useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -12,14 +12,23 @@ import {
   FaTrash,
 } from "react-icons/fa6";
 import { formatedDateFull } from "../../_utilities/formatedDate";
-import { deleteRepair } from "../../_services/repair";
-import { viewObject } from "../../_utilities/action/repairObject";
+import {
+  createRepair,
+  deleteRepair,
+  showRepair,
+  updateRepair,
+} from "../../_services/repair";
+import {
+  addObject,
+  editObject,
+  viewObject,
+} from "../../_utilities/actionObject/repairObject";
 
 export default function Repair() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
-  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
   const { repairs } = data;
+  const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
   const {
     totalPage,
     currentPage,
@@ -127,6 +136,78 @@ export default function Repair() {
     });
   };
 
+  const handleAddEdit = async (id, isEdit) => {
+    const onClose = (reload, info) => {
+      if (!info) {
+        setInfoModal((prev) => ({ ...prev, isOpen: false }));
+      } else {
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+      }
+
+      if (reload) {
+        handleChangePage("default");
+      }
+    };
+
+    const onSubmit = async (e, formData) => {
+      e.preventDefault();
+      setIsLoading(true);
+
+      try {
+        const { success, message } = isEdit
+          ? await updateRepair(id, formData)
+          : await createRepair(formData);
+
+        setFormModal((prev) => ({ ...prev, isOpen: false }));
+
+        setInfoModal({
+          isOpen: true,
+          title: `Success: ${success}`,
+          message: message,
+          onClose: () => onClose(true),
+        });
+      } catch (error) {
+        console.log(error);
+
+        setInfoModal({
+          isOpen: true,
+          isError: true,
+          title: "Failed",
+          message: error?.message,
+          onClose: () => onClose(false),
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    try {
+      setIsLoading(true);
+
+      const { data } = isEdit ? await showRepair(id) : {};
+
+      setIsLoading(false);
+
+      setFormModal({
+        isOpen: true,
+        fields: isEdit ? editObject : addObject,
+        data,
+        onSubmit,
+        onClose: () => onClose(false, true),
+      });
+    } catch (error) {
+      console.log(error);
+
+      setInfoModal({
+        isOpen: true,
+        isError: true,
+        title: "Failed",
+        message: error?.message,
+        onClose: () => onClose(false),
+      });
+    }
+  };
+
   return (
     <main className={styles.main}>
       <section className={styles.title}>
@@ -156,10 +237,7 @@ export default function Repair() {
               <FaMagnifyingGlass />
             </button>
 
-            <button
-              type="button"
-              onClick={() => handleChangePath("repairs/add")}
-            >
+            <button type="button" onClick={() => handleAddEdit()}>
               <FaPlus />
             </button>
           </div>
@@ -173,6 +251,7 @@ export default function Repair() {
                 <th>Asset ID</th>
                 <th>Repair Date</th>
                 <th>Finish Date</th>
+                <th>Notes</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -188,7 +267,12 @@ export default function Repair() {
                   <td>{r?.repair_id}</td>
                   <td>{r?.asset_id}</td>
                   <td>{formatedDateFull(r?.repairAt)}</td>
-                  <td>{formatedDateFull(r?.finishAt)}</td>
+                  <td>
+                    {formatedDateFull(r?.finishAt) || (
+                      <span status="REPAIR">Still Repairing</span>
+                    )}
+                  </td>
+                  <td>{r?.notes}</td>
                   <td>
                     <div className={styles.action}>
                       <button
@@ -204,9 +288,7 @@ export default function Repair() {
                       </button>
                       <button
                         title="Edit"
-                        onClick={() =>
-                          handleChangePath("repairs/edit", r?.repair_id)
-                        }
+                        onClick={() => handleAddEdit(r?.repair_id, true)}
                       >
                         <FaPencil />
                       </button>

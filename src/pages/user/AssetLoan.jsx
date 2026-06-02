@@ -1,4 +1,4 @@
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import styles from "../../styles/User.module.css";
 import { useEffect, useState } from "react";
 import {
@@ -12,6 +12,7 @@ import { createTransaction } from "../../_services/transaction";
 
 export default function AssetLoan() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
+  const navigate = useNavigate();
 
   const { setIsLoading, setInfoModal } = overlay;
   const { assets, user } = data;
@@ -112,26 +113,23 @@ export default function AssetLoan() {
   const onScanSuccess = (value) => {
     setOpenCamModal(false);
 
-    setFormData({
-      ...formData,
-      asset_id: value,
-    });
-
-    if (autoSubmit) {
-      handleSubmit();
-    }
+    handleSubmit(null, value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, value) => {
     e?.preventDefault();
     setIsLoading(true);
 
     try {
       const payload = {
         ...formData,
-        nrp: user?.nrp,
+        user_id: user?.nrp,
         loanAt: new Date().toISOString(),
       };
+
+      if (value) {
+        payload["asset_id"] = value;
+      }
 
       const res = await createTransaction(payload);
 
@@ -147,6 +145,12 @@ export default function AssetLoan() {
         loan_needs: "",
         asset_id: "",
       });
+
+      const role = user?.role?.toLowerCase();
+
+      if (role === "tool keeper" || role === "planner") {
+        navigate("/planner/transactions");
+      }
     } catch (error) {
       console.log(error?.message);
 
@@ -195,7 +199,12 @@ export default function AssetLoan() {
                 id="asset_id"
                 value={formData?.asset_id}
                 onChange={handleChange}
-                placeholder="Input Your Asset ID"
+                disabled={!formData?.loan_needs}
+                placeholder={
+                  formData?.loan_needs
+                    ? "Input Your Asset ID"
+                    : "Please input your needs first"
+                }
                 required
               />
 
@@ -205,8 +214,12 @@ export default function AssetLoan() {
                     <button
                       key={a?.asset_number}
                       type="button"
+                      disabled={!formData?.loan_needs}
                       onClick={() =>
-                        setFormData({ ...formData, asset_id: a?.asset_number })
+                        setFormData({
+                          ...formData,
+                          asset_id: a?.asset_number,
+                        })
                       }
                     >
                       {a?.asset_number}
@@ -221,22 +234,18 @@ export default function AssetLoan() {
                 type="button"
                 className={styles.openCamBtn}
                 onClick={handleOpenCamera}
+                disabled={!formData?.loan_needs}
               >
                 <FaQrcode /> Scan QR Code <FaCamera />
               </button>
             </div>
 
             <div className={styles.inputContainer}>
-              <label htmlFor="autoSubmit">Enable Auto Submit After Scan?</label>
-              <input
-                type="checkbox"
-                name="autoSubmit"
-                id="autoSubmit"
-                onChange={handleChange}
-                checked={autoSubmit}
-              />
-
-              <button type="submit" className={styles.submitBtn}>
+              <button
+                type="submit"
+                className={styles.submitBtn}
+                disabled={!formData?.loan_needs}
+              >
                 Submit <FaPaperPlane />
               </button>
             </div>

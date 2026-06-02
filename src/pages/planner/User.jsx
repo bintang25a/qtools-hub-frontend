@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import styles from "../../styles/Planner.module.css";
+import styles from "../../styles/Admin.module.css";
 import { useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -21,7 +21,7 @@ import {
   addObject,
   editObject,
   viewObject,
-} from "../../_utilities/action/userObject";
+} from "../../_utilities/actionObject/userObject";
 
 export default function User() {
   const { data, firstLoad, overlay, feature } = useOutletContext();

@@ -76,26 +76,8 @@ export default function UserLayout() {
       if (isChecking) {
         setIsLoading(true);
 
-        const onClose = () => {
-          setInfoModal({ ...infoModal, isOpen: false });
-          navigate("/login", { replace: true });
-        };
-
         try {
           const res = await me();
-
-          const condition =
-            res?.data?.role === "planner" || res?.data?.role === "tool keeper";
-
-          if (condition) {
-            setInfoModal({
-              isOpen: true,
-              isError: true,
-              title: "Unauthorized",
-              message: "Redirect to actual path",
-              onClose: onClose,
-            });
-          }
 
           setUser(res?.data);
         } catch (error) {
