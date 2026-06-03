@@ -85,7 +85,7 @@ export default function Repair() {
 
     setSearchData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value?.toLowerCase(),
     }));
   };
 
@@ -212,7 +212,7 @@ export default function Repair() {
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaRegClipboard className={styles.titleIcon} /> Repair Data
+          <FaRegClipboard className={styles.titleIcon} /> Historical Repair
         </h1>
       </section>
 
@@ -231,6 +231,7 @@ export default function Repair() {
               <option value="">Search by</option>
               <option value="repair_id">Repair ID</option>
               <option value="asset_id">Asset ID</option>
+              <option value="notes">Notes</option>
             </select>
 
             <button type="submit" title="Search">

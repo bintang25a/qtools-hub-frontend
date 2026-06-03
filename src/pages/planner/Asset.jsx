@@ -84,7 +84,7 @@ export default function Asset() {
 
     setSearchData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value?.toLowerCase(),
     }));
   };
 
@@ -211,7 +211,7 @@ export default function Asset() {
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaWrench className={styles.titleIcon} /> Asset Data
+          <FaWrench className={styles.titleIcon} /> Tools & Assets Data
         </h1>
       </section>
 
@@ -233,6 +233,7 @@ export default function Asset() {
               <option value="status">Status</option>
               <option value="location">Location</option>
               <option value="district">District</option>
+              <option value="description">Description</option>
             </select>
 
             <button type="submit" title="Search">

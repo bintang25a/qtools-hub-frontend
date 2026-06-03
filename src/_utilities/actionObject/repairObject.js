@@ -76,7 +76,7 @@ export const viewObject = {
     },
     {
       type: "object",
-      title: "Asset",
+      title: "Repaired Asset",
       key: "asset",
       keys: [
         {
@@ -84,8 +84,8 @@ export const viewObject = {
           label: "Class",
         },
         {
-          key: "creator",
-          label: "Creator",
+          key: "district",
+          label: "District",
         },
         {
           key: "description",

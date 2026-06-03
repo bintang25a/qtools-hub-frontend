@@ -19,7 +19,7 @@ export const editObject = [
   },
   {
     name: "loanAt",
-    label: "Return Date",
+    label: "Borrow Date",
     type: "datetime-local",
   },
   {
@@ -46,7 +46,7 @@ export const viewObject = {
         },
         {
           key: "loanAt",
-          label: "Return Date",
+          label: "Borrow Date",
           type: "date",
         },
         {
@@ -67,6 +67,7 @@ export const viewObject = {
     {
       type: "object",
       key: "user",
+      title: "User",
       keys: [
         {
           key: "name",
@@ -77,14 +78,15 @@ export const viewObject = {
     {
       type: "object",
       key: "asset",
+      title: "Borrowed Asset",
       keys: [
         {
           key: "class",
           label: "Class",
         },
         {
-          key: "creator",
-          label: "Creator",
+          key: "district",
+          label: "District",
         },
         {
           key: "description",

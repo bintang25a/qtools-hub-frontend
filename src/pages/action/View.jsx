@@ -100,10 +100,20 @@ export default function View() {
                 <React.Fragment key={i}>
                   <span>{sk?.label}</span>
                   <span> : </span>
-                  <span>
+                  <span
+                    status={
+                      sk?.type === "date" &&
+                      !data?.[sk?.key] &&
+                      !data?.[s?.key]?.[sk?.key]
+                        ? "NA"
+                        : sk?.key === "status"
+                        ? data?.[sk?.key] || data?.[s?.key]?.[sk?.key]
+                        : false
+                    }
+                  >
                     {!s?.key
                       ? sk?.type === "date"
-                        ? formatedDateFull(data?.[sk?.key] || "SOON")
+                        ? formatedDateFull(data?.[sk?.key]) || "SOON"
                         : data?.[sk?.key]
                       : data?.[s?.key]?.[sk?.key]}
                   </span>
@@ -141,7 +151,13 @@ export default function View() {
                     {s?.keys?.map((sk, i) => (
                       <React.Fragment key={i}>
                         <span>{sk?.label}</span>
-                        <span>
+                        <span
+                          status={
+                            sk?.type === "date"
+                              ? data?.[sk?.key] || data?.[s?.key]?.[sk?.key]
+                              : null
+                          }
+                        >
                           {": "}
                           {sk?.type === "date"
                             ? formatedDateFull(item?.[sk?.key]) || "SOON"

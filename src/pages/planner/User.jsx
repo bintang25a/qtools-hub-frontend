@@ -84,7 +84,7 @@ export default function User() {
 
     setSearchData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value?.toLowerCase(),
     }));
   };
 

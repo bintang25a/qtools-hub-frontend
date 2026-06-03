@@ -84,7 +84,7 @@ export default function Report() {
 
     setSearchData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value?.toLowerCase(),
     }));
   };
 
@@ -211,7 +211,8 @@ export default function Report() {
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaClipboardQuestion className={styles.titleIcon} /> Report Data
+          <FaClipboardQuestion className={styles.titleIcon} /> Berita Acara
+          Kerusakan Data
         </h1>
       </section>
 

@@ -188,10 +188,6 @@ export default function PlannerLayout() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
 
-    if (!searchData?.key || !searchData?.value) {
-      return;
-    }
-
     setToggleSearch(!toggleSearch);
     setCurrentPage(1);
   };

@@ -75,8 +75,8 @@ export const viewObject = {
           label: "Class",
         },
         {
-          key: "creator",
-          label: "Creator",
+          key: "district",
+          label: "District",
         },
         {
           key: "description",

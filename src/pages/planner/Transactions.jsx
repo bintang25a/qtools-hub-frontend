@@ -84,7 +84,7 @@ export default function Transactions() {
 
     setSearchData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value?.toLowerCase(),
     }));
   };
 
@@ -227,7 +227,7 @@ export default function Transactions() {
             <select name="key" id="key" onChange={handleSearchChange}>
               <option value="">Search by</option>
               <option value="transaction_id">Transaction ID</option>
-              <option value="user_id">Mechanic ID</option>
+              <option value="user_id">User ID</option>
               <option value="asset_id">Asset ID</option>
               <option value="loan_need">Needs</option>
             </select>
