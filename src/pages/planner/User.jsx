@@ -230,6 +230,7 @@ export default function User() {
               <option value="">Search by</option>
               <option value="nrp">NRP</option>
               <option value="name">Name</option>
+              <option value="section">Section</option>
               <option value="role">Role</option>
             </select>
 
@@ -249,6 +250,7 @@ export default function User() {
               <tr>
                 <th>NRP</th>
                 <th>Name</th>
+                <th>Section</th>
                 <th>Role</th>
                 <th>Action</th>
               </tr>
@@ -262,8 +264,9 @@ export default function User() {
 
               {users?.map((u) => (
                 <tr key={u?.nrp}>
-                  <td>{u?.nrp}</td>
+                  <td style={{ textAlign: "left" }}>{u?.nrp}</td>
                   <td>{u?.name}</td>
+                  <td>{u?.section}</td>
                   <td>{u?.role}</td>
                   <td>
                     <div className={styles.action}>

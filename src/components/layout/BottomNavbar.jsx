@@ -4,13 +4,25 @@ import {
   FaBoxesPacking,
   FaClipboardCheck,
   FaClockRotateLeft,
+  FaFileCircleExclamation,
   FaRightFromBracket,
   FaUser,
 } from "react-icons/fa6";
+import { logout } from "../../_services/auth";
 
 export default function BottomNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      navigate("/login", { replace: true });
+    }
+  };
 
   return (
     <nav className={styles.bottomNavbar}>
@@ -24,17 +36,21 @@ export default function BottomNavbar() {
         {location.pathname === "/asset-return" && <span>Asset Return</span>}
       </button>
 
-      <button onClick={() => navigate("history")} title="History">
+      <button onClick={() => navigate("/asset-report")} title="Asset Return">
+        <FaFileCircleExclamation />
+        {location.pathname === "/asset-report" && <span>Laporkan</span>}
+      </button>
+
+      <button onClick={() => navigate("/")} title="History">
         <FaClockRotateLeft />
-        {location.pathname === "/history" && <span>History</span>}
+        {location.pathname === "/" && <span>History</span>}
       </button>
 
-      <button onClick={() => navigate("/")} title="Profile">
-        <FaUser />
-        {location.pathname === "/" && <span>Profile</span>}
-      </button>
-
-      <button className={styles.logoutBtn} title="Logout">
+      <button
+        className={styles.logoutBtn}
+        title="Logout"
+        onClick={handleLogout}
+      >
         <FaRightFromBracket />
       </button>
     </nav>

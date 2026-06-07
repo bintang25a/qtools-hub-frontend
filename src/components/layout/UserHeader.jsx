@@ -3,7 +3,6 @@ import logo from "/images/logo/logo-nobg.png";
 import styles from "../../styles/Layout.module.css";
 import {
   MdLogout,
-  MdMenu,
   MdNotifications,
   MdNotificationsActive,
 } from "react-icons/md";
@@ -12,7 +11,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../_services/auth";
 import { getPhoto } from "../../_services/files";
 
-export default function Header({ user, setSidebarOpen, hasNotifications }) {
+export default function UserHeader({ user, hasNotifications }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +19,6 @@ export default function Header({ user, setSidebarOpen, hasNotifications }) {
 
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
-    setSidebarOpen(false);
   };
 
   const handleLogout = async () => {
@@ -39,13 +37,6 @@ export default function Header({ user, setSidebarOpen, hasNotifications }) {
 
   return (
     <header className={styles.header}>
-      <button
-        className={styles.menuButton}
-        onClick={() => setSidebarOpen((prev) => !prev)}
-      >
-        <MdMenu />
-      </button>
-
       <div className={styles.logo}>
         <img src={logo} alt="Logo" />
       </div>

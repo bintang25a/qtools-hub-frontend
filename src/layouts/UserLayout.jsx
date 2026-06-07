@@ -6,20 +6,18 @@ import LoadingJump from "../components/overlay/JumpLoading";
 import ConfirmModal from "../components/overlay/ConfirmModal";
 import InfoModal from "../components/overlay/InfoModal";
 import { me } from "../_services/auth";
-import { getUsers } from "../_services/user";
 import { getAssets } from "../_services/asset";
-import { getReports } from "../_services/report";
-import { getRepairs } from "../_services/repair";
-import { getTransactions } from "../_services/transaction";
 import FormModal from "../components/overlay/FormModal";
 import BottomNavbar from "../components/layout/BottomNavbar";
+import UserHeader from "../components/layout/UserHeader";
+import { getTransactionsByUser } from "../_services/transaction";
+import { getUsers } from "../_services/user";
 
 export default function UserLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [hasNotifications, setHasNotifications] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -53,7 +51,10 @@ export default function UserLayout() {
     value: "",
   });
 
-  const [user, setUser] = useState(null);
+  const tempUser = localStorage.getItem("user");
+  const userParse = tempUser ? JSON.parse(tempUser) : {};
+
+  const [user, setUser] = useState(userParse || {});
   const [users, setUsers] = useState([]);
   const [assets, setAssets] = useState([]);
   const [reports, setReports] = useState([]);
@@ -61,8 +62,6 @@ export default function UserLayout() {
   const [transactions, setTransactions] = useState([]);
 
   const [toggleSearch, setToggleSearch] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
 
   useEffect(() => {
     setIsChecking(true);
@@ -71,7 +70,7 @@ export default function UserLayout() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const pathaname = location.pathname;
+      const pathname = location.pathname;
 
       if (isChecking) {
         setIsLoading(true);
@@ -89,7 +88,6 @@ export default function UserLayout() {
         setIsLoading(true);
 
         const queryArray = [];
-        queryArray.push(`page=${currentPage}`);
 
         if (searchData?.key && searchData?.value) {
           queryArray.push(`${searchData?.key}=${searchData?.value}`);
@@ -97,10 +95,24 @@ export default function UserLayout() {
 
         const query = queryArray?.join("&");
 
-        if (pathaname === "/asset-loan") {
+        if (pathname === "/asset-loan") {
           const [assetsData] = await Promise.all([getAssets("limit=50")]);
 
           setAssets(assetsData?.data);
+        } else if (pathname === "/asset-return") {
+          const [transactionsData] = await Promise.all([
+            getTransactionsByUser(`user_id=${user?.nrp}`),
+          ]);
+
+          setTransactions(transactionsData?.data);
+        } else if (pathname === "/asset-report") {
+          const [assetsData, usersData] = await Promise.all([
+            getAssets("limit=50"),
+            getUsers("all=true"),
+          ]);
+
+          setAssets(assetsData?.data);
+          setUsers(usersData?.data);
         }
       } catch (error) {
         console.log(error);
@@ -111,24 +123,9 @@ export default function UserLayout() {
     };
 
     fetchData();
-    setSidebarOpen(false);
 
     // eslint-disable-next-line
-  }, [currentPage, toggleSearch]);
-
-  const handleChangePage = (position = true) => {
-    if (Number.isInteger(position)) {
-      setCurrentPage(Number(position));
-    } else if (position == true) {
-      setCurrentPage(currentPage + 1);
-    } else if (position == false) {
-      setCurrentPage(currentPage - 1);
-    } else if (currentPage === 1) {
-      setToggleSearch(!toggleSearch);
-    } else {
-      setCurrentPage(1);
-    }
-  };
+  }, [toggleSearch]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -138,7 +135,6 @@ export default function UserLayout() {
     }
 
     setToggleSearch(!toggleSearch);
-    setCurrentPage(1);
   };
 
   const handleChangePath = ({ path, data = null }) => {
@@ -152,7 +148,10 @@ export default function UserLayout() {
   return (
     <>
       <div className={styles.layout}>
+        <UserHeader user={user} hasNotifications={hasNotifications} />
         <div className={styles.content}>
+          <BottomNavbar />
+
           <Outlet
             context={{
               data: {
@@ -170,11 +169,8 @@ export default function UserLayout() {
                 setIsFirstLoad,
               },
               feature: {
-                totalPage,
-                currentPage,
                 setSearchData,
                 handleChangePath,
-                handleChangePage,
                 handleSearchSubmit,
               },
               overlay: {
@@ -186,9 +182,6 @@ export default function UserLayout() {
             }}
           />
         </div>
-
-        <BottomNavbar />
-        {/* <Footer /> */}
       </div>
 
       {isLoading && <LoadingJump />}

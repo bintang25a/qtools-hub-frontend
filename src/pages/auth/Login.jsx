@@ -11,6 +11,7 @@ import {
   FaUser,
 } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
+import logo from "/images/logo/logo-nobg.png";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -88,10 +89,13 @@ export default function Login() {
     <>
       <div className={styles.authPage}>
         <div className={styles.box}>
+          <img src={logo} alt="Logo" />
+
           <h1>
             <FaDoorOpen /> Login
           </h1>
-          <h2>Welcome to QTools Hub</h2>
+
+          <h2>Welcome to AstroWeb</h2>
 
           <form onSubmit={handleSubmit}>
             <div className={styles.inputForm}>

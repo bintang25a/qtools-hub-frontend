@@ -13,6 +13,8 @@ import View from "./pages/action/View";
 import UserLayout from "./layouts/UserLayout";
 import AssetLoan from "./pages/user/AssetLoan";
 import Profile from "./pages/user";
+import AssetReport from "./pages/user/AssetReport";
+import AssetReturn from "./pages/user/AssetReturn";
 
 export default function App() {
   return (
@@ -23,7 +25,8 @@ export default function App() {
         <Route path="/" element={<UserLayout />}>
           <Route index element={<Profile />} />
           <Route path="asset-loan" element={<AssetLoan />} />
-          <Route path="asset-return" element={<main>Asset Return</main>} />
+          <Route path="asset-return" element={<AssetReturn />} />
+          <Route path="asset-report" element={<AssetReport />} />
           <Route path="history" element={<main>History</main>} />
         </Route>
 

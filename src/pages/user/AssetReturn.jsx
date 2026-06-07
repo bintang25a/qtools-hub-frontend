@@ -8,20 +8,19 @@ import {
   FaQrcode,
 } from "react-icons/fa6";
 import QrScannerModal from "../../components/overlay/QrScannerModal";
-import { createTransaction } from "../../_services/transaction";
+import { assetReturn } from "../../_services/action";
 
-export default function AssetLoan() {
-  const { data, firstLoad, overlay, feature } = useOutletContext();
+export default function AssetReturn() {
+  const { data, firstLoad, overlay } = useOutletContext();
   const navigate = useNavigate();
 
   const { setIsLoading, setInfoModal } = overlay;
-  const { assets, user } = data;
-  const { setSearchData, handleChangePage } = feature;
+  const { transactions, user } = data;
 
   const [openCamModal, setOpenCamModal] = useState(false);
 
   const [formData, setFormData] = useState({
-    loan_needs: "",
+    returnAt: "",
     asset_id: "",
   });
 
@@ -30,13 +29,6 @@ export default function AssetLoan() {
 
     if (!isFirstLoad) {
       setIsLoading(true);
-
-      handleChangePage("default");
-
-      setSearchData({
-        key: "",
-        value: "",
-      });
     }
 
     // eslint-disable-next-line
@@ -47,7 +39,7 @@ export default function AssetLoan() {
 
     let conditionTimeout;
 
-    if (assets && user) {
+    if (transactions && user) {
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -65,7 +57,7 @@ export default function AssetLoan() {
     };
 
     // eslint-disable-next-line
-  }, [assets, user]);
+  }, [transactions, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,13 +67,6 @@ export default function AssetLoan() {
       [name]: value,
     });
   };
-
-  const filteredAsset =
-    assets?.filter((a) =>
-      a?.asset_number
-        ?.toUpperCase()
-        ?.includes(formData?.asset_id?.toUpperCase())
-    ) || [];
 
   const handleOpenCamera = async () => {
     try {
@@ -111,21 +96,24 @@ export default function AssetLoan() {
     try {
       const payload = {
         ...formData,
-        user_id: user?.nrp,
-        loanAt: new Date().toISOString(),
+        returnAt: new Date().toISOString(),
       };
 
       if (value) {
         payload["asset_id"] = value;
       }
 
-      const res = await createTransaction(payload);
+      const transaction = transactions?.find(
+        (t) => t?.asset_id === payload?.asset_id
+      );
+
+      await assetReturn(transaction?.transaction_id, payload);
 
       setInfoModal({
         isOpen: true,
         isError: false,
         title: "Success",
-        message: res?.message,
+        message: "Asset Returned",
         onClose: () => setInfoModal((prev) => ({ ...prev, isOpen: false })),
       });
 
@@ -154,12 +142,10 @@ export default function AssetLoan() {
     }
   };
 
-  const [isFocus, setIsFocus] = useState(false);
-
   return (
     <main className={styles.main}>
       <section className={styles.title}>
-        <h1>Asset Loan</h1>
+        <h1>Asset Return</h1>
       </section>
       <section className={styles.assetForm}>
         <h2>
@@ -170,25 +156,11 @@ export default function AssetLoan() {
         <form onSubmit={handleSubmit}>
           <div className={styles.formContainer}>
             <div className={styles.inputContainer}>
-              <label htmlFor="loan_needs">Needs</label>
-              <textarea
-                name="loan_needs"
-                id="loan_needs"
-                rows={6}
-                value={formData?.loan_needs}
-                onChange={handleChange}
-                placeholder="Describe what makes you take this asset"
-                required
-              />
-            </div>
-
-            <div className={styles.inputContainer}>
               <label htmlFor="asset_id">Scan or input asset</label>
               <button
                 type="button"
                 className={styles.openCamBtn}
                 onClick={handleOpenCamera}
-                disabled={!formData?.loan_needs}
               >
                 <FaQrcode /> Scan QR Code <FaCamera />
               </button>
@@ -198,45 +170,18 @@ export default function AssetLoan() {
                 id="asset_id"
                 value={formData?.asset_id}
                 onChange={handleChange}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setTimeout(() => setIsFocus(false), 250)}
-                disabled={!formData?.loan_needs}
-                placeholder={
-                  formData?.loan_needs
-                    ? "Input Your Asset ID"
-                    : "Please input your needs first"
-                }
+                placeholder={"Input Your Asset ID"}
                 required
               />
-
-              {filteredAsset?.length > 0 && isFocus && (
-                <div className={styles.assetContainer}>
-                  {filteredAsset?.slice(0, 15)?.map((a) => (
-                    <button
-                      key={a?.asset_number}
-                      type="button"
-                      disabled={!formData?.loan_needs}
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          asset_id: a?.asset_number,
-                        })
-                      }
-                    >
-                      {a?.asset_number}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
             <div className={styles.inputContainer}>
               <button
                 type="submit"
                 className={styles.submitBtn}
-                disabled={!formData?.loan_needs}
+                disabled={!formData?.asset_id}
               >
-                Submit <FaPaperPlane />
+                Returned Asset <FaPaperPlane />
               </button>
             </div>
           </div>

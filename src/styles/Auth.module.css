@@ -25,6 +25,8 @@
     align-items: flex-start;
     gap: var(--px-32);
 
+    position: relative;
+
     > h1 {
       width: 100%;
 
@@ -46,6 +48,17 @@
       font-size: var(--fs-8);
       font-weight: 400;
       line-height: 1;
+    }
+
+    > img {
+      aspect-ratio: 2/1;
+      width: var(--px-128);
+      height: auto;
+      align-self: center;
+
+      position: absolute;
+      left: var(--px-16);
+      top: var(--px-16);
     }
 
     > form {

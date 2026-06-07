@@ -5,6 +5,11 @@ export const getTransactions = async (query) => {
   return data;
 };
 
+export const getTransactionsByUser = async (query) => {
+  const { data } = await API.get(`/transactions/byUser?${query}`);
+  return data;
+};
+
 export const showTransaction = async (id) => {
   try {
     const { data } = await API.get(`/transactions/${id}`);

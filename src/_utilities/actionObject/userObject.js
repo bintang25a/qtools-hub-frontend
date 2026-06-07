@@ -10,9 +10,28 @@ export const addObject = [
     placeholder: "Input Full Name",
   },
   {
+    name: "section",
+    label: "Section",
+    placeholder: "Input Section",
+  },
+  {
     name: "role",
     label: "Role",
-    placeholder: "Input Role",
+    type: "select",
+    options: [
+      {
+        value: "mechanic",
+        name: "Mechanic",
+      },
+      {
+        value: "tool keeper",
+        name: "Tool Keeper",
+      },
+      {
+        value: "planner",
+        name: "Planner",
+      },
+    ],
   },
 ];
 
@@ -29,9 +48,28 @@ export const editObject = [
     placeholder: "Input Full Name",
   },
   {
+    name: "section",
+    label: "Section",
+    placeholder: "Input Section",
+  },
+  {
     name: "role",
     label: "Role",
-    placeholder: "Input Role",
+    type: "select",
+    options: [
+      {
+        value: "mechanic",
+        name: "Mechanic",
+      },
+      {
+        value: "tool keeper",
+        name: "Tool Keeper",
+      },
+      {
+        value: "planner",
+        name: "Planner",
+      },
+    ],
   },
 ];
 
@@ -48,6 +86,10 @@ export const viewObject = {
         {
           key: "name",
           label: "Name",
+        },
+        {
+          key: "section",
+          label: "Section",
         },
         {
           key: "role",
