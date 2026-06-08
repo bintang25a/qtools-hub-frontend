@@ -1,18 +1,11 @@
 import { useNavigate, useOutletContext } from "react-router-dom";
 import styles from "../../styles/User.module.css";
 import { useEffect, useState } from "react";
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaCamera,
-  FaClipboardList,
-  FaFileCircleExclamation,
-  FaPaperPlane,
-  FaQrcode,
-} from "react-icons/fa6";
+import { FaCamera, FaFileCircleExclamation, FaQrcode } from "react-icons/fa6";
 import QrScannerModal from "../../components/overlay/QrScannerModal";
-import { createTransaction } from "../../_services/transaction";
+import { createReport } from "../../_services/report";
 import PageButton from "../../components/form/PageButton";
+import { viewObject } from "../../_utilities/actionObject/reportObject";
 
 export default function AssetReport() {
   const { data, firstLoad, overlay } = useOutletContext();
@@ -22,6 +15,7 @@ export default function AssetReport() {
   const { assets, users, user } = data;
 
   const [openCamModal, setOpenCamModal] = useState(false);
+  const [roleUsers, setRoleUsers] = useState(null);
 
   const tempReportForm = localStorage.getItem("tempReportForm");
   const parse = tempReportForm ? JSON.parse(tempReportForm) : {};
@@ -34,6 +28,7 @@ export default function AssetReport() {
     evidence2: "",
     remark2: "",
     follow_up: "",
+    group_leader_id: "",
     planner_id: "",
     plant_engineer_id: "",
     section_head_id: "",
@@ -57,6 +52,35 @@ export default function AssetReport() {
     let conditionTimeout;
 
     if (assets && user) {
+      const grouped = users?.reduce(
+        (acc, user) => {
+          const section = user?.section?.toLowerCase();
+
+          if (section?.includes("planner")) {
+            acc?.planner?.push(user);
+          } else if (section?.includes("plant")) {
+            acc?.plantEngineer?.push(user);
+          } else if (section?.includes("sec") && section?.includes("head")) {
+            acc?.secHead?.push(user);
+          } else if (section?.includes("dept") && section?.includes("head")) {
+            acc?.deptHead?.push(user);
+          } else if (section?.includes("group lead")) {
+            acc?.groupLead?.push(user);
+          }
+
+          return acc;
+        },
+        {
+          planner: [],
+          plantEngineer: [],
+          secHead: [],
+          deptHead: [],
+          groupLead: [],
+        }
+      );
+
+      setRoleUsers(grouped);
+
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -99,16 +123,38 @@ export default function AssetReport() {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
 
-    const data = {
-      ...formData,
-      [name]: value,
-    };
+    if (files) {
+      const file = files[0] || null;
 
-    setFormData(data);
+      const MAX_FILE_SIZE = 4 * 1024 * 1024;
 
-    localStorage.setItem("tempReportForm", JSON.stringify(data));
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`File "${file.name}" is too large, maximum size is 4MB.`);
+
+        e.target.value = null;
+        return;
+      }
+
+      setFormData({
+        ...formData,
+        [name]: file,
+      });
+    } else {
+      const data = {
+        ...formData,
+        [name]: value,
+      };
+
+      setFormData(data);
+
+      const { evidence1, evidence2, ...rest } = data;
+
+      console.log(evidence1, evidence2);
+
+      localStorage.setItem("tempReportForm", JSON.stringify(rest));
+    }
   };
 
   const handleAssetIdClick = (id) => {
@@ -125,44 +171,68 @@ export default function AssetReport() {
   const onScanSuccess = (value) => {
     setOpenCamModal(false);
 
-    handleSubmit(null, value);
+    setFormData({
+      ...formData,
+      asset_id: value,
+    });
   };
 
-  const handleSubmit = async (e, value) => {
+  const handleSubmit = async (e) => {
     e?.preventDefault();
     setIsLoading(true);
 
-    try {
-      const payload = {
-        ...formData,
-        user_id: user?.nrp,
-        loanAt: new Date().toISOString(),
-      };
+    const onClose = (id) => {
+      setInfoModal((prev) => ({ ...prev, isOpen: false }));
 
-      if (value) {
-        payload["asset_id"] = value;
+      if (user?.role === "planner" || user?.role === "tool keeper") {
+        navigate("/admin/reports/view", {
+          replace: true,
+          state: { id, ...viewObject },
+        });
+      } else {
+        navigate("/", { replace: true });
       }
+    };
 
-      const res = await createTransaction(payload);
+    try {
+      const payload = new FormData();
+
+      Object.keys(formData).forEach((key) => {
+        if (formData[key] !== undefined && formData[key] !== null) {
+          payload.append(key, formData[key]);
+        }
+      });
+
+      payload.append("user_id", user?.nrp);
+
+      const res = await createReport(payload);
 
       setInfoModal({
         isOpen: true,
         isError: false,
         title: "Success",
         message: res?.message,
-        onClose: () => setInfoModal((prev) => ({ ...prev, isOpen: false })),
+        onClose: () => onClose(),
       });
 
       setFormData({
-        loan_needs: "",
         asset_id: "",
+        description: "",
+        evidence1: "",
+        remark1: "",
+        evidence2: "",
+        remark2: "",
+        follow_up: "",
+        group_leader_id: "",
+        planner_id: "",
+        plant_engineer_id: "",
+        section_head_id: "",
+        depth_head_id: "",
       });
 
-      const role = user?.role?.toLowerCase();
+      localStorage.removeItem("tempReportForm");
 
-      if (role === "tool keeper" || role === "planner") {
-        navigate("/planner/transactions");
-      }
+      setPage(1);
     } catch (error) {
       console.log(error?.message);
 
@@ -184,7 +254,7 @@ export default function AssetReport() {
     !formData?.asset_id,
     !formData?.evidence1 || !formData?.remark1,
     !formData?.description,
-    page == 4,
+    "lastPage",
   ];
 
   return (
@@ -206,12 +276,12 @@ export default function AssetReport() {
 
               <div className={styles.inputContainer}>
                 <label htmlFor="nrp">NRP</label>
-                <input type="text" value={user?.nrp} disabled />
+                <input type="text" value={user?.nrp} required disabled />
               </div>
 
               <div className={styles.inputContainer}>
                 <label htmlFor="nrp">Reporter Name</label>
-                <input type="text" value={user?.name} disabled />
+                <input type="text" value={user?.name} required disabled />
               </div>
 
               <div className={styles.inputContainer}>
@@ -266,8 +336,9 @@ export default function AssetReport() {
                   type="file"
                   id="evidence1"
                   name="evidence1"
-                  accept="image/*"
+                  accept="image/png, image/jpeg, image/jpg"
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -290,7 +361,7 @@ export default function AssetReport() {
                   type="file"
                   id="evidence2"
                   name="evidence2"
-                  accept="image/*"
+                  accept="image/png, image/jpeg, image/jpg"
                   onChange={handleChange}
                 />
               </div>
@@ -339,6 +410,7 @@ export default function AssetReport() {
                         value={option}
                         checked={formData?.follow_up === option}
                         onChange={handleChange}
+                        required
                       />
                       {option}
                     </label>
@@ -353,55 +425,91 @@ export default function AssetReport() {
               <h3>Page 4/4 : Supervisor</h3>
 
               <div className={styles.inputContainer}>
-                <label htmlFor="description">Description</label>
+                <label htmlFor="description">Select Group Leader</label>
+                <select
+                  name="group_leader_id"
+                  id="group_leader_id"
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Group Leader</option>
+                  {roleUsers?.groupLead?.map((u) => (
+                    <option key={u.nrp} value={u.nrp}>
+                      {u?.nrp} - {u.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.inputContainer}>
+                <label htmlFor="planner_id">Select Planner</label>
                 <select
                   name="planner_id"
                   id="planner_id"
                   onChange={handleChange}
+                  required
                 >
                   <option value="">Select Planner</option>
-                  {users
-                    ?.filter((u) =>
-                      u?.section?.toLowerCase().includes("planner")
-                    )
-                    ?.map((u) => (
-                      <option key={u.nrp} value={u.nrp}>
-                        {u.name}
-                      </option>
-                    ))}
+                  {roleUsers?.planner?.map((u) => (
+                    <option key={u.nrp} value={u.nrp}>
+                      {u?.nrp} - {u.name}
+                    </option>
+                  ))}
                 </select>
-                <textarea
-                  rows={6}
-                  type="text"
-                  id="description"
-                  name="description"
-                  placeholder="Describe details about report"
-                  onChange={handleChange}
-                  value={formData?.description}
-                  required
-                />
               </div>
 
               <div className={styles.inputContainer}>
-                <label htmlFor="follow_up">Follow Up</label>
-
-                <div className={styles.radioContainer}>
-                  {["repair", "calibration", "replace"].map((option) => (
-                    <label key={option} className={styles.radioLabel}>
-                      <input
-                        type="radio"
-                        name="follow_up"
-                        value={option}
-                        checked={formData?.follow_up === option}
-                        onChange={handleChange}
-                      />
-                      {option}
-                    </label>
+                <label htmlFor="plant_engineer_id">Select Plant Engineer</label>
+                <select
+                  name="plant_engineer_id"
+                  id="plant_engineer_id"
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Plant Engineer</option>
+                  {roleUsers?.plantEngineer?.map((u) => (
+                    <option key={u.nrp} value={u.nrp}>
+                      {u?.nrp} - {u.name}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
 
-              <PageButton page={page} setPage={setPage} isNext={isNext[2]} />
+              <div className={styles.inputContainer}>
+                <label htmlFor="section_head_id">Select Section Head</label>
+                <select
+                  name="section_head_id"
+                  id="section_head_id"
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Section Head</option>
+                  {roleUsers?.secHead?.map((u) => (
+                    <option key={u.nrp} value={u.nrp}>
+                      {u?.nrp} - {u.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.inputContainer}>
+                <label htmlFor="dept_head_id">Select Dept Head</label>
+                <select
+                  name="dept_head_id"
+                  id="dept_head_id"
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Dept Head</option>
+                  {roleUsers?.deptHead?.map((u) => (
+                    <option key={u.nrp} value={u.nrp}>
+                      {u?.nrp} - {u.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <PageButton page={page} setPage={setPage} isNext={isNext[3]} />
             </div>
           )}
         </form>

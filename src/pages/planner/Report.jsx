@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import styles from "../../styles/Admin.module.css";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -11,20 +11,15 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa6";
+import { deleteReport, showReport, updateReport } from "../../_services/report";
 import {
-  createReport,
-  deleteReport,
-  showReport,
-  updateReport,
-} from "../../_services/report";
-import {
-  addObject,
   editObject,
   viewObject,
 } from "../../_utilities/actionObject/reportObject";
 
 export default function Report() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
+  const navigate = useNavigate();
 
   const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
   const { reports } = data;
@@ -135,7 +130,7 @@ export default function Report() {
     });
   };
 
-  const handleAddEdit = async (id, isEdit) => {
+  const handleEdit = async (id) => {
     const onClose = (reload, info) => {
       if (!info) {
         setInfoModal((prev) => ({ ...prev, isOpen: false }));
@@ -153,9 +148,7 @@ export default function Report() {
       setIsLoading(true);
 
       try {
-        const { success, message } = isEdit
-          ? await updateReport(id, formData)
-          : await createReport(formData);
+        const { success, message } = await updateReport(id, formData);
 
         setFormModal((prev) => ({ ...prev, isOpen: false }));
 
@@ -183,13 +176,13 @@ export default function Report() {
     try {
       setIsLoading(true);
 
-      const { data } = isEdit ? await showReport(id) : {};
+      const { data } = await showReport(id);
 
       setIsLoading(false);
 
       setFormModal({
         isOpen: true,
-        fields: isEdit ? editObject : addObject,
+        fields: editObject,
         data,
         onSubmit,
         onClose: () => onClose(false, true),
@@ -239,7 +232,10 @@ export default function Report() {
               <FaMagnifyingGlass />
             </button>
 
-            <button type="button" onClick={() => handleAddEdit()}>
+            <button
+              type="button"
+              onClick={() => navigate("/asset-report", { replace: true })}
+            >
               <FaPlus />
             </button>
           </div>
@@ -253,13 +249,22 @@ export default function Report() {
                 <th>Reporter ID</th>
                 <th>Asset ID</th>
                 <th>Description</th>
+                <th>Evidence 1</th>
+                <th>Remark 1</th>
+                <th>Evidence 2</th>
+                <th>Remark 2</th>
+                <th>Group Leader ID</th>
+                <th>Planner ID</th>
+                <th>Plant Engineer ID</th>
+                <th>Section Head ID</th>
+                <th>Dept Head ID</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {reports?.length === 0 ? (
                 <tr>
-                  <td colSpan={5}>No reports right now</td>
+                  <td colSpan={14}>No reports right now</td>
                 </tr>
               ) : null}
 
@@ -269,6 +274,15 @@ export default function Report() {
                   <td>{r?.reporter_id}</td>
                   <td>{r?.asset_id}</td>
                   <td text="true">{r?.description}</td>
+                  <td>{r?.evidence1}</td>
+                  <td>{r?.remark1}</td>
+                  <td>{r?.evidence2}</td>
+                  <td>{r?.remark2}</td>
+                  <td>{r?.group_leader_id}</td>
+                  <td>{r?.planner_id}</td>
+                  <td>{r?.plant_engineer_id}</td>
+                  <td>{r?.section_head_id}</td>
+                  <td>{r?.dept_head_id}</td>
                   <td>
                     <div className={styles.action}>
                       <button
@@ -284,7 +298,7 @@ export default function Report() {
                       </button>
                       <button
                         title="Edit"
-                        onClick={() => handleAddEdit(r?.report_id, true)}
+                        onClick={() => handleEdit(r?.report_id, true)}
                       >
                         <FaPencil />
                       </button>

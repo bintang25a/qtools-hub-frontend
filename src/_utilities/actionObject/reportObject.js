@@ -1,14 +1,3 @@
-export const addObject = [
-  {
-    name: "asset_id",
-    label: "Asset ID",
-  },
-  {
-    name: "description",
-    label: "Description",
-  },
-];
-
 export const editObject = [
   {
     name: "report_id",
@@ -27,6 +16,33 @@ export const editObject = [
   {
     name: "description",
     label: "Description",
+  },
+  {
+    name: "remark1",
+    label: "Remark 1",
+  },
+  {
+    name: "remark2",
+    label: "Remark 2",
+  },
+  {
+    name: "follow_up",
+    label: "Follow Up",
+    type: "select",
+    options: [
+      {
+        name: "Repair",
+        value: "repair",
+      },
+      {
+        name: "Calibration",
+        value: "calibration",
+      },
+      {
+        name: "Replace",
+        value: "replace",
+      },
+    ],
   },
 ];
 
@@ -56,17 +72,6 @@ export const viewObject = {
     },
     {
       type: "object",
-      title: "Reporter",
-      key: "reporter",
-      keys: [
-        {
-          key: "name",
-          label: "Name",
-        },
-      ],
-    },
-    {
-      type: "object",
       title: "Reported Asset",
       key: "asset",
       keys: [
@@ -89,6 +94,72 @@ export const viewObject = {
         {
           key: "status",
           label: "Status",
+        },
+      ],
+    },
+    {
+      type: "object",
+      title: "Reporter",
+      key: "reporter",
+      keys: [
+        {
+          key: "name",
+          label: "Name",
+        },
+      ],
+    },
+    {
+      type: "object",
+      title: "Group Leader",
+      key: "groupLeader",
+      keys: [
+        {
+          key: "name",
+          label: "Name",
+        },
+      ],
+    },
+    {
+      type: "object",
+      title: "Planner",
+      key: "planner",
+      keys: [
+        {
+          key: "name",
+          label: "Name",
+        },
+      ],
+    },
+    {
+      type: "object",
+      title: "Plant Engineer",
+      key: "plantEngineer",
+      keys: [
+        {
+          key: "name",
+          label: "Name",
+        },
+      ],
+    },
+    {
+      type: "object",
+      title: "Section Head",
+      key: "sectionHead",
+      keys: [
+        {
+          key: "name",
+          label: "Name",
+        },
+      ],
+    },
+    {
+      type: "object",
+      title: "Dept Head",
+      key: "deptHead",
+      keys: [
+        {
+          key: "name",
+          label: "Name",
         },
       ],
     },

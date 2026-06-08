@@ -52,7 +52,7 @@ export default function View() {
             : action === "repairs"
             ? await showRepair(id)
             : action === "reports"
-            ? showReport(id)
+            ? await showReport(id)
             : { data: { success: false, message: "Action empty" } };
 
         setData(res?.data);

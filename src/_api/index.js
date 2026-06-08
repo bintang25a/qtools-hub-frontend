@@ -1,9 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://yrs-submissions-object-classic.trycloudflare.com/api",
-  // "https://putting-sofa-closes-phenomenon.trycloudflare.com/api",
-  // "http://127.0.0.1:5000/api",
+  baseURL:
+    // "https://yrs-submissions-object-classic.trycloudflare.com/api",
+    // "https://putting-sofa-closes-phenomenon.trycloudflare.com/api",
+    "http://127.0.0.1:5000/api",
 });
 
 API.interceptors.request.use(

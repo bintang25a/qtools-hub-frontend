@@ -332,7 +332,8 @@
 
   overflow-y: auto;
   overflow-x: hidden;
-
+}
+.content:has(.bottomNavbar) {
   position: relative;
 }
 
