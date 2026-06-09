@@ -11,12 +11,11 @@ import QrScannerModal from "../../components/overlay/QrScannerModal";
 import { createTransaction } from "../../_services/transaction";
 
 export default function AssetLoan() {
-  const { data, firstLoad, overlay, feature } = useOutletContext();
+  const { data, firstLoad, overlay } = useOutletContext();
   const navigate = useNavigate();
 
   const { setIsLoading, setInfoModal } = overlay;
   const { assets, user } = data;
-  const { setSearchData, handleChangePage } = feature;
 
   const [openCamModal, setOpenCamModal] = useState(false);
 
@@ -30,13 +29,6 @@ export default function AssetLoan() {
 
     if (!isFirstLoad) {
       setIsLoading(true);
-
-      handleChangePage("default");
-
-      setSearchData({
-        key: "",
-        value: "",
-      });
     }
 
     // eslint-disable-next-line
