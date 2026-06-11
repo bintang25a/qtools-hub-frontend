@@ -12,9 +12,9 @@ import BottomNavbar from "../components/layout/BottomNavbar";
 import UserHeader from "../components/layout/UserHeader";
 import { getTransactionsByUser } from "../_services/transaction";
 import { getUsers } from "../_services/user";
+import { getReportsByUser } from "../_services/report";
 
 export default function UserLayout() {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [hasNotifications, setHasNotifications] = useState(false);
@@ -113,6 +113,14 @@ export default function UserLayout() {
 
           setAssets(assetsData?.data);
           setUsers(usersData?.data);
+        } else if (pathname === "/") {
+          const [transactionsData, reportsData] = await Promise.all([
+            getTransactionsByUser(`user_id=${user?.nrp}`),
+            getReportsByUser(`user_id=${user?.nrp}`),
+          ]);
+
+          setTransactions(transactionsData?.data);
+          setReports(reportsData?.data);
         }
       } catch (error) {
         console.log(error);
@@ -125,7 +133,7 @@ export default function UserLayout() {
     fetchData();
 
     // eslint-disable-next-line
-  }, [toggleSearch]);
+  }, [toggleSearch, location?.pathname]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -135,10 +143,6 @@ export default function UserLayout() {
     }
 
     setToggleSearch(!toggleSearch);
-  };
-
-  const handleChangePath = ({ path, data = null }) => {
-    navigate(`${path}`, { state: data });
   };
 
   if (isChecking) {
@@ -170,7 +174,6 @@ export default function UserLayout() {
               },
               feature: {
                 setSearchData,
-                handleChangePath,
                 handleSearchSubmit,
               },
               overlay: {

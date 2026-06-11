@@ -3,6 +3,7 @@ import styles from "../../styles/User.module.css";
 import { useEffect, useState } from "react";
 import {
   FaCamera,
+  FaClipboardCheck,
   FaClipboardList,
   FaPaperPlane,
   FaQrcode,
@@ -149,8 +150,8 @@ export default function AssetReturn() {
       </section>
       <section className={styles.assetForm}>
         <h2>
-          <FaClipboardList />
-          Loan Form
+          <FaClipboardCheck />
+          Return Form
         </h2>
 
         <form onSubmit={handleSubmit}>

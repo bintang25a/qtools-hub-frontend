@@ -20,11 +20,13 @@ import { viewObject as repairObj } from "../../_utilities/actionObject/repairObj
 import { viewObject as reportObj } from "../../_utilities/actionObject/reportObject";
 import { FaArrowLeft } from "react-icons/fa6";
 
-export default function View() {
+export default function BasicView() {
   const { feature, firstLoad, overlay } = useOutletContext();
   const navigate = useNavigate();
-  const { action } = useParams();
-  const { state } = useLocation();
+  const { action: actionData } = useParams();
+  const { state, pathname } = useLocation();
+
+  const firstPath = pathname?.split("/")[1];
 
   const { handleChangePath } = feature;
 
@@ -41,6 +43,8 @@ export default function View() {
 
       try {
         const id = state?.id;
+
+        const action = actionData ? actionData : state?.action;
 
         const res =
           action === "users"
@@ -66,7 +70,7 @@ export default function View() {
 
     fetchData();
     // eslint-disable-next-line
-  }, [action, state]);
+  }, [actionData, state]);
 
   const handlePath = ({ path, id }) => {
     const obj =
@@ -89,7 +93,10 @@ export default function View() {
   };
 
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      path={firstPath === "view" ? "user" : "admin"}
+    >
       {sections?.map((s, i) =>
         s?.type === "object" ? (
           <section key={i} className={styles.section}>
@@ -173,7 +180,10 @@ export default function View() {
         )
       )}
 
-      <button className={styles.backBtn} onClick={() => navigate(-1)}>
+      <button
+        className={styles.backBtn}
+        onClick={() => navigate(-1, { replace: true })}
+      >
         <FaArrowLeft />
       </button>
     </main>

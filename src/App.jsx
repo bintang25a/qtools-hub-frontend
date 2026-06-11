@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import PlannerLayout from "./layouts/AdminLayout";
 import Dashboard from "./pages/planner";
@@ -7,14 +7,13 @@ import Asset from "./pages/planner/Asset";
 import Transactions from "./pages/planner/Transactions";
 import Repair from "./pages/planner/Repair";
 import Report from "./pages/planner/Report";
-import Add from "./pages/action/Add";
-import Edit from "./pages/action/Edit";
-import View from "./pages/action/View";
+import BasicView from "./pages/action/BasicView";
 import UserLayout from "./layouts/UserLayout";
 import AssetLoan from "./pages/user/AssetLoan";
-import Profile from "./pages/user";
+import History from "./pages/user";
 import AssetReport from "./pages/user/AssetReport";
 import AssetReturn from "./pages/user/AssetReturn";
+import ReportView from "./pages/action/ReportView";
 
 export default function App() {
   return (
@@ -23,11 +22,16 @@ export default function App() {
         <Route path="login" element={<Login />} />
 
         <Route path="/" element={<UserLayout />}>
-          <Route index element={<Profile />} />
+          <Route index element={<History />} />
           <Route path="asset-loan" element={<AssetLoan />} />
           <Route path="asset-return" element={<AssetReturn />} />
           <Route path="asset-report" element={<AssetReport />} />
-          <Route path="history" element={<main>History</main>} />
+
+          <Route path="view">
+            <Route index element={<Navigate to={"/"} />} />
+            <Route path="asset/:id" element={<BasicView />} />
+            <Route path="report/:id" element={<ReportView />} />
+          </Route>
         </Route>
 
         <Route path="admin" element={<PlannerLayout />}>
@@ -39,9 +43,7 @@ export default function App() {
           <Route path="reports" element={<Report />} />
           <Route path="inspections" element={<main>Coming Soon</main>} />
 
-          <Route path=":action/add" element={<Add />} />
-          <Route path=":action/edit" element={<Edit />} />
-          <Route path=":action/view" element={<View />} />
+          <Route path=":action/view" element={<BasicView />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -190,7 +190,7 @@ export default function AssetReport() {
           state: { id, ...viewObject },
         });
       } else {
-        navigate("/", { replace: true });
+        navigate(`/view/reports/${id}`, { replace: true });
       }
     };
 
@@ -207,12 +207,14 @@ export default function AssetReport() {
 
       const res = await createReport(payload);
 
+      alert(res?.data?.report_id);
+
       setInfoModal({
         isOpen: true,
         isError: false,
         title: "Success",
         message: res?.message,
-        onClose: () => onClose(),
+        onClose: () => onClose(res?.data?.report_id),
       });
 
       setFormData({
@@ -430,6 +432,7 @@ export default function AssetReport() {
                   name="group_leader_id"
                   id="group_leader_id"
                   onChange={handleChange}
+                  value={formData?.group_leader_id}
                   required
                 >
                   <option value="">Select Group Leader</option>
@@ -447,6 +450,7 @@ export default function AssetReport() {
                   name="planner_id"
                   id="planner_id"
                   onChange={handleChange}
+                  value={formData?.planner_id}
                   required
                 >
                   <option value="">Select Planner</option>
@@ -464,6 +468,7 @@ export default function AssetReport() {
                   name="plant_engineer_id"
                   id="plant_engineer_id"
                   onChange={handleChange}
+                  value={formData?.plant_engineer_id}
                   required
                 >
                   <option value="">Select Plant Engineer</option>
@@ -481,6 +486,7 @@ export default function AssetReport() {
                   name="section_head_id"
                   id="section_head_id"
                   onChange={handleChange}
+                  value={formData?.section_head_id}
                   required
                 >
                   <option value="">Select Section Head</option>
@@ -498,6 +504,7 @@ export default function AssetReport() {
                   name="dept_head_id"
                   id="dept_head_id"
                   onChange={handleChange}
+                  value={formData?.dept_head_id}
                   required
                 >
                   <option value="">Select Dept Head</option>

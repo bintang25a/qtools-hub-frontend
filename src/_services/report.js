@@ -5,6 +5,11 @@ export const getReports = async (query) => {
   return data;
 };
 
+export const getReportsByUser = async (query) => {
+  const { data } = await API.get(`/reports/byUser?${query}`);
+  return data;
+};
+
 export const showReport = async (id) => {
   try {
     const { data } = await API.get(`/reports/${id}`);
