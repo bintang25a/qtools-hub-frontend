@@ -3,7 +3,7 @@ import axios from "axios";
 const API = axios.create({
   baseURL:
     // "https://yrs-submissions-object-classic.trycloudflare.com/api",
-    "https://hash-antivirus-wrote-elephant.trycloudflare.com/api",
+    "https://breakfast-studied-museum-updated.trycloudflare.com/api",
   // "http://127.0.0.1:5000/api",
 });
 

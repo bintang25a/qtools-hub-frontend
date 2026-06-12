@@ -153,9 +153,17 @@ export default function User() {
       setIsLoading(true);
 
       try {
+        const payload = new FormData();
+
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== undefined && formData[key] !== null) {
+            payload.append(key, formData[key]);
+          }
+        });
+
         const { success, message } = isEdit
-          ? await updateUser(id, formData)
-          : await createUser(formData);
+          ? await updateUser(id, payload)
+          : await createUser(payload);
 
         setFormModal((prev) => ({ ...prev, isOpen: false }));
 

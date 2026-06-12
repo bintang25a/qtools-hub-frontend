@@ -1,5 +1,10 @@
 export const addObject = [
   {
+    name: "photo",
+    label: "Upload your photo profile",
+    type: "file",
+  },
+  {
     name: "nrp",
     label: "NRP",
     placeholder: "Input NRP",
@@ -36,6 +41,11 @@ export const addObject = [
 ];
 
 export const editObject = [
+  {
+    name: "photo",
+    label: "Upload your photo profile",
+    type: "file",
+  },
   {
     name: "nrp",
     label: "NRP",

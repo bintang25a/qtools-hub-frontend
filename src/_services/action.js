@@ -9,3 +9,16 @@ export const assetReturn = async (id, data) => {
     throw error?.response?.data;
   }
 };
+
+export const pdfDownload = async (data) => {
+  try {
+    const response = await API.post(`actions/pdf-download`, data, {
+      responseType: "blob",
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error?.response?.data;
+  }
+};

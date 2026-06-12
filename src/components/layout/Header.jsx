@@ -10,7 +10,6 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../_services/auth";
-import { getPhoto } from "../../_services/files";
 
 export default function Header({ user, setSidebarOpen, hasNotifications }) {
   const navigate = useNavigate();
@@ -57,7 +56,7 @@ export default function Header({ user, setSidebarOpen, hasNotifications }) {
           </button>
         )}
 
-        <img src={user?.photo ? getPhoto(user?.photo) : profile} alt="Logo" />
+        <img src={user?.photo ? user?.photo_url : profile} alt="Logo" />
       </div>
 
       <div className={styles.personalDetail}>
