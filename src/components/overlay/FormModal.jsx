@@ -2,7 +2,6 @@ import { useState } from "react";
 import styles from "../../styles/Component.module.css";
 import { MdClose } from "react-icons/md";
 import { FaPaperPlane } from "react-icons/fa6";
-import { getPhoto } from "../../_services/files";
 
 export default function FormModal({ fields, data, onSubmit, onClose, isView }) {
   const [formData, setFormData] = useState(() => {
@@ -63,7 +62,7 @@ export default function FormModal({ fields, data, onSubmit, onClose, isView }) {
                   field?.name === "photo" &&
                   isView ? (
                   <>
-                    <img src={getPhoto(formData[field?.name])} alt="" />
+                    <img src={formData[field?.name]} alt="" />
                   </>
                 ) : (
                   <>

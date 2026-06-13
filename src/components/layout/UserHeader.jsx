@@ -2,6 +2,7 @@ import profile from "/images/profile/profile.webp";
 import logo from "/images/logo/logo-nobg.png";
 import styles from "../../styles/Layout.module.css";
 import {
+  MdImage,
   MdLogout,
   MdNotifications,
   MdNotificationsActive,
@@ -9,13 +10,25 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../_services/auth";
-import { getPhoto } from "../../_services/files";
+import FormModal from "../overlay/FormModal";
+import { updateUser } from "../../_services/user";
 
 export default function UserHeader({ user, hasNotifications }) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [profileOpen, setProfileOpen] = useState(false);
+  const [formModal, setFormModal] = useState({
+    isOpen: false,
+    data: user,
+    fields: [
+      {
+        name: "photo",
+        label: "Change Photo",
+        type: "file",
+      },
+    ],
+  });
 
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
@@ -28,6 +41,42 @@ export default function UserHeader({ user, hasNotifications }) {
       console.log(error);
     } finally {
       navigate("/login", { replace: true });
+    }
+  };
+
+  const handleOpen = () => {
+    setProfileOpen(false);
+    setFormModal({ ...formModal, isOpen: true });
+  };
+
+  const handleClose = () => {
+    setFormModal({ ...formModal, isOpen: false });
+  };
+
+  const handleSubmit = async (e, formData) => {
+    e.preventDefault();
+
+    try {
+      const payload = new FormData();
+
+      const newFormData = {
+        ...user,
+        ...formData,
+      };
+
+      console.log(newFormData);
+
+      Object.keys(newFormData).forEach((key) => {
+        if (newFormData[key] !== undefined && newFormData[key] !== null) {
+          payload.append(key, newFormData[key]);
+        }
+      });
+
+      await updateUser(user?.nrp, payload);
+
+      handleClose();
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -48,7 +97,7 @@ export default function UserHeader({ user, hasNotifications }) {
           </button>
         )}
 
-        <img src={user?.photo ? getPhoto(user?.photo) : profile} alt="Logo" />
+        <img src={user?.photo ? user?.photo_url : profile} alt="Logo" />
       </div>
 
       <div className={styles.personalDetail}>
@@ -60,6 +109,9 @@ export default function UserHeader({ user, hasNotifications }) {
 
       {profileOpen && (
         <div className={styles.personalMenu}>
+          <button onClick={handleOpen}>
+            <MdImage /> Change Photo
+          </button>
           <Link to={"notifications"}>
             <MdNotifications /> Notification
           </Link>
@@ -67,6 +119,15 @@ export default function UserHeader({ user, hasNotifications }) {
             <MdLogout /> Logout
           </button>
         </div>
+      )}
+
+      {formModal?.isOpen && (
+        <FormModal
+          fields={formModal?.fields}
+          data={formModal?.data}
+          onSubmit={handleSubmit}
+          onClose={handleClose}
+        />
       )}
     </header>
   );

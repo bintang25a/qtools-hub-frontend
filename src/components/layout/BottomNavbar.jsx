@@ -6,6 +6,7 @@ import {
   FaClockRotateLeft,
   FaFileCircleExclamation,
   FaRightFromBracket,
+  FaToolbox,
   FaUser,
 } from "react-icons/fa6";
 import { logout } from "../../_services/auth";
@@ -27,22 +28,30 @@ export default function BottomNavbar() {
   return (
     <nav className={styles.bottomNavbar}>
       <button onClick={() => navigate("/asset-loan")} title="Asset Loan">
-        <FaBoxesPacking />
-        {location.pathname === "/asset-loan" && <span>Asset Loan</span>}
+        <FaBoxesPacking className={styles.icon} />
+        {location.pathname === "/asset-loan" && <span>Peminjaman</span>}
       </button>
 
       <button onClick={() => navigate("/asset-return")} title="Asset Return">
-        <FaClipboardCheck />
-        {location.pathname === "/asset-return" && <span>Asset Return</span>}
+        <FaClipboardCheck className={styles.icon} />
+        {location.pathname === "/asset-return" && <span>Pengembalian</span>}
       </button>
 
       <button onClick={() => navigate("/asset-report")} title="Asset Return">
-        <FaFileCircleExclamation />
+        <FaFileCircleExclamation className={styles.icon} />
         {location.pathname === "/asset-report" && <span>Laporkan</span>}
       </button>
 
+      <button
+        onClick={() => navigate("/toolbox-inspection")}
+        title="Toolbox Inspection"
+      >
+        <FaToolbox className={styles.icon} />
+        {location.pathname === "/toolbox-inspection" && <span>Inspection</span>}
+      </button>
+
       <button onClick={() => navigate("/")} title="History">
-        <FaClockRotateLeft />
+        <FaClockRotateLeft className={styles.icon} />
         {location.pathname === "/" && <span>History</span>}
       </button>
 

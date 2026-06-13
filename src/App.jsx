@@ -26,6 +26,7 @@ export default function App() {
           <Route path="asset-loan" element={<AssetLoan />} />
           <Route path="asset-return" element={<AssetReturn />} />
           <Route path="asset-report" element={<AssetReport />} />
+          <Route path="toolbox-inspection" element={<AssetReport />} />
 
           <Route path="view">
             <Route index element={<Navigate to={"/"} />} />

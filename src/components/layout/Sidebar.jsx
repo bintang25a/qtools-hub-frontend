@@ -1,7 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../../styles/Layout.module.css";
 import profile from "/images/profile/profile.webp";
-import { getPhoto } from "../../_services/files";
 import { MdClose, MdLogout } from "react-icons/md";
 import {
   FaClipboardList,
@@ -53,10 +52,7 @@ export default function Sidebar({ user, setSidebarOpen }) {
     <aside className={styles.sidebar}>
       <div className={styles.personal}>
         <div className={styles.photo}>
-          <img
-            src={user?.photo ? getPhoto(user?.photo) : profile}
-            alt="Photo"
-          />
+          <img src={user?.photo ? user?.photo_url : profile} alt="Photo" />
         </div>
 
         <div className={styles.profile}>

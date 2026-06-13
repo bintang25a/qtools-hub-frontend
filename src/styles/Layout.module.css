@@ -387,7 +387,7 @@
     background-color: transparent;
 
     > span {
-      font-size: var(--fs-7);
+      font-size: var(--fs-5);
       font-weight: 600;
     }
   }
@@ -400,8 +400,6 @@
   > button:has(span) {
     background-color: var(--white);
     border-radius: var(--px-8);
-    padding: var(--px-16) var(--px-32);
-
     color: var(--primary);
   }
 
@@ -561,8 +559,19 @@
     box-shadow: 0px 0px 8px var(--gray-700);
 
     > button {
+      min-width: var(--px-64);
+      min-height: var(--px-64);
+
       cursor: pointer;
       font-size: var(--fs-8);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .icon {
+        min-width: fit-content;
+      }
 
       > span {
         display: none;

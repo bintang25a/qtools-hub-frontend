@@ -152,7 +152,7 @@ export default function Login() {
           </form>
 
           <p>
-            &copy; 2026, Developer Team |<span>| QTools</span>
+            &copy; 2026, Developer Team |<span>| AstroWeb</span>
             <span> Hub</span>
           </p>
         </div>

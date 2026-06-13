@@ -1,41 +1,51 @@
-import styles from "../../styles/Report.module.css";
-import { useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa6";
-import { useRef } from "react";
+import styles from "../../styles/Action.module.css";
+import pdfStyles from "../../styles/pdf.module.css?raw";
+import { useNavigate, useParams } from "react-router-dom";
+import { FaArrowLeft, FaDownload } from "react-icons/fa6";
+import { useEffect, useRef, useState } from "react";
 import { pdfDownload } from "../../_services/action";
+import logo from "/images/logo/logo-kpp.png";
+import { showReport } from "../../_services/report";
+import { convertImageToBase64 } from "../../_utilities/ConvertImageTo64";
+import { formatedDate } from "../../_utilities/formatedDate";
 
 export default function ReportView() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const pdfRef = useRef();
 
-  const handleDownload = async () => {
-    const getStyles = () => {
-      let styles = "";
+  const [report, setReport] = useState(null);
+  const [btnLoading, setBtnLoading] = useState(false);
 
-      for (const sheet of document.styleSheets) {
-        try {
-          const rules = sheet.cssRules || sheet.rules;
+  useEffect(() => {
+    const fetchData = async () => {
+      const [reportData] = await Promise.all([showReport(id)]);
 
-          for (const rule of rules) {
-            styles += rule.cssText;
-          }
-        } catch (err) {
-          console.log("Cannot access stylesheet", err);
-        }
-      }
-
-      return styles;
+      setReport(reportData?.data);
     };
 
+    fetchData();
+  }, [id]);
+
+  const handleDownload = async () => {
     try {
+      setBtnLoading(true);
+
+      const imgElement = pdfRef.current.querySelector(`.${styles.logo}`);
+
+      if (imgElement) {
+        const base64Image = await convertImageToBase64(logo);
+        imgElement.src = base64Image;
+      }
+
       const html = `
         <!DOCTYPE html>
         <html>
           <head>
             <style>
               body{ margin: 0; padding: 0; }
-              ${getStyles()}
+              ${pdfStyles}
             </style>
           </head>
           <body>
@@ -66,168 +76,158 @@ export default function ReportView() {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.log(err);
+    } finally {
+      setBtnLoading(false);
     }
   };
 
   return (
-    <>
-      <div className={styles.paper} ref={pdfRef}>
-        {/* Header */}
-        <div className={styles.header}>
-          <div className={styles.companySection}>
-            <img src="/logo-kpp.png" alt="KPP" className={styles.logo} />
+    <main className={styles.main} path="user">
+      <div className={styles.canvas}>
+        <div className={`${styles.paper} paper`} ref={pdfRef}>
+          <div className={`${styles.textarea} textarea`}>
+            <div className={`${styles.header} header`}>
+              <img src={logo} alt="KPP" className={`${styles.logo} logo`} />
 
-            <div className={styles.companyInfo}>
-              <div className={styles.companyName}>
-                PT KALIMANTAN PRIMA PERSADA
+              <div className={`${styles.title} title`}>
+                <h1>Berita Acara Kehilangan Kerusakan</h1>
+
+                <h2>
+                  No : {report?.asset?.district} / PLT / {report?.report_id} /
+                  VI / BAKK-
+                  {formatedDate(report?.createdAt)?.split(" ")[3]}
+                </h2>
+              </div>
+            </div>
+
+            <div className={`${styles.infoSection} infoSection`}>
+              <div className={`${styles.divider} divider`}>
+                <span>BAKK</span>
+                <span>Pada Hari</span>
+                <span>Tanggal</span>
+                <span>Distrik</span>
+              </div>
+              <div className={`${styles.divider} divider`}>
+                <span> : {report?.report_id}</span>
+                <span> : {formatedDate(report?.createdAt)?.split(",")[0]}</span>
+                <span>
+                  {" : "}
+                  {formatedDate(report?.createdAt)
+                    ?.split(",")[1]
+                    ?.replace(" ", "")}
+                </span>
+                <span> : {report?.asset?.district}</span>
+              </div>
+            </div>
+
+            <h3>Yang bertanda tangan di bawah ini</h3>
+
+            <div className={`${styles.infoSection} infoSection`}>
+              <div className={`${styles.divider} divider`}>
+                <span>Nama</span>
+                <span>NRP</span>
+                <span>Jabatan</span>
+              </div>
+              <div className={`${styles.divider} divider`}>
+                <span> : {report?.reporter?.name}</span>
+                <span> : {report?.reporter_id}</span>
+                <span> : {report?.reporter?.section}</span>
+              </div>
+            </div>
+
+            <h3>Bertanggung jawab atas</h3>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Tool Detail</th>
+                  <th>Deskripsi Kerusakan</th>
+                  <th>Remark 1</th>
+                  <th>Foto 1</th>
+                  {report?.remark2 && <th>Remark 2</th>}
+                  {report?.evidence2 && <th>Foto 2</th>}
+                  <th>Saran</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>{report?.asset?.description}</td>
+                  <td>{report?.description}</td>
+                  <td>{report?.remark1}</td>
+                  <td>
+                    <img src={report?.evidence1_url} alt="Foto 1" />
+                  </td>
+                  {report?.remark2 && <td>{report?.remark2}</td>}
+                  {report?.evidence2 && (
+                    <td>
+                      <img src={report?.evidence1_url1} alt="Foto 1" />
+                    </td>
+                  )}
+                  <td>{report?.follow_up?.toUpperCase()}</td>
+                </tr>
+
+                <tr>
+                  <td colSpan="7">
+                    <div>Hasil Investigasi :</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className={`${styles.signatureSection} signatureSection`}>
+              <div className={`${styles.signature} signature`}>
+                <span>Dibuat oleh,</span>
+
+                <div className={`${styles.persons} persons`}>
+                  <div className={`${styles.person} person`}>
+                    <span>{report?.groupLeader?.name}</span>
+                    <span>Plant Group Leader</span>
+                  </div>
+                </div>
               </div>
 
-              <div className={styles.companySub}>
-                INTEGRATED MINING SERVICES
+              <div className={`${styles.signature} signature`}>
+                <span>Diketahui oleh,</span>
+
+                <div className={`${styles.persons} persons`}>
+                  <div className={`${styles.person} person`}>
+                    <span>{report?.plantEngineer?.name}</span>
+                    <span>Plant Engineer</span>
+                  </div>
+
+                  <div className={`${styles.person} person`}>
+                    <span>{report?.planner?.name}</span>
+                    <span>Plant Planner</span>
+                  </div>
+
+                  <div className={`${styles.person} person`}>
+                    <span>{report?.sectionHead?.name}</span>
+                    <span>Plant Section Head</span>
+                  </div>
+                </div>
               </div>
-
-              <div className={styles.member}>member of ASTRA</div>
-            </div>
-          </div>
-
-          <div className={styles.documentTitle}>
-            <h1>Berita Acara Kehilangan Kerusakan</h1>
-
-            <h2>No : RANT / PLT / 925 / VI / BAKK-2026</h2>
-          </div>
-        </div>
-
-        {/* Informasi */}
-        <div className={styles.infoSection}>
-          <div className={styles.leftInfo}>
-            <div className={styles.row}>
-              <span>BAKK</span>
-              <span>:</span>
-              <span className={styles.highlight}>925</span>
-            </div>
-
-            <div className={styles.row}>
-              <span>Pada hari</span>
-              <span>:</span>
-              <span>Senin</span>
-            </div>
-
-            <div className={styles.row}>
-              <span>Tanggal</span>
-              <span>:</span>
-              <span>01-Jun-26</span>
-            </div>
-
-            <div className={styles.row}>
-              <span>Distrik</span>
-              <span>:</span>
-              <span>Rantau</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Penanggung Jawab */}
-        <div className={styles.personSection}>
-          <p>Yang bertanda tangan dibawah ini</p>
-
-          <div className={styles.row}>
-            <span>Nama</span>
-            <span>:</span>
-            <span>Rahmadana</span>
-          </div>
-
-          <div className={styles.row}>
-            <span>NRP</span>
-            <span>:</span>
-            <span>KC10019</span>
-          </div>
-
-          <div className={styles.row}>
-            <span>Jabatan</span>
-            <span>:</span>
-            <span>Minimex Mekanik</span>
-          </div>
-        </div>
-
-        <div className={styles.responsibility}>Bertanggung jawab atas</div>
-
-        {/* Tabel */}
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Nama Tool</th>
-              <th>Spesifikasi</th>
-              <th>Merk</th>
-              <th>Jumlah</th>
-              <th>Kondisi</th>
-              <th>Foto_1</th>
-              <th>Foto_2</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td>Hammer tembaga 5 kg</td>
-              <td>MTC 5 kg(655514)</td>
-              <td>MTC</td>
-              <td>1</td>
-              <td>Rusak</td>
-
-              <td>
-                <img
-                  src="/sample-tool.jpg"
-                  alt=""
-                  className={styles.toolImage}
-                />
-              </td>
-
-              <td></td>
-
-              <td>Palu patah</td>
-            </tr>
-
-            <tr>
-              <td colSpan="8" className={styles.investigation}>
-                <div>Hasil Investigasi :</div>
-
-                <div>Akibat Pemakaian</div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* Signature */}
-        <div className={styles.signatureSection}>
-          <div className={styles.signatureHeader}>
-            <div>Dibuat oleh,</div>
-            <div>Diketahui oleh,</div>
-          </div>
-
-          <div className={styles.signatureSpace}></div>
-
-          <div className={styles.signatureNames}>
-            <div>Plant Group Leader / Requested</div>
-
-            <div>Plant Engineer</div>
-
-            <div>Plant Planner</div>
-
-            <div>
-              <div>Ahmad Gapuri</div>
-
-              <div>Plant Sect. Head</div>
             </div>
           </div>
         </div>
       </div>
+
       <button
-        // className={styles.backBtn}
-        onClick={handleDownload}
-        // onClick={() => navigate(-1, { replace: true })}
+        className={styles.backBtn}
+        onClick={() => navigate(-1, { replace: true })}
+        title="Back"
       >
         <FaArrowLeft />
       </button>
-    </>
+
+      <button
+        className={styles.downloadBtn}
+        onClick={handleDownload}
+        title="Download BAKK"
+        disabled={btnLoading}
+      >
+        <FaDownload />
+      </button>
+    </main>
   );
 }
