@@ -22,3 +22,16 @@ export const pdfDownload = async (data) => {
     throw error?.response?.data;
   }
 };
+
+export const inspectionDownload = async (id) => {
+  try {
+    const response = await API.get(`actions/inspection-download/${id}`, {
+      responseType: "blob",
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error?.response?.data;
+  }
+};

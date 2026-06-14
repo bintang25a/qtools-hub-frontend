@@ -121,6 +121,8 @@
           font-weight: 500;
           color: var(--thirdnary);
           opacity: 0.5;
+
+          cursor: text;
         }
         .inputIcon {
           position: absolute;

@@ -129,7 +129,7 @@ export default function AssetLoan() {
       const role = user?.role?.toLowerCase();
 
       if (role === "tool keeper" || role === "planner") {
-        navigate("/planner/transactions");
+        navigate("/admin/transactions");
       }
     } catch (error) {
       console.log(error?.message);

@@ -9,31 +9,24 @@ import {
   FaMagnifyingGlass,
   FaPencil,
   FaPlus,
+  FaToolbox,
   FaTrash,
 } from "react-icons/fa6";
 import { formatedDateFull } from "../../_utilities/formatedDate";
-import {
-  deleteTransaction,
-  showTransaction,
-  updateTransaction,
-} from "../../_services/transaction";
-import {
-  editObject,
-  viewObject,
-} from "../../_utilities/actionObject/transactionObject";
+import { deleteInspection } from "../../_services/inspection";
+import { inspectionDownload } from "../../_services/action";
 
-export default function Transactions() {
+export default function Inspection() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
   const navigate = useNavigate();
 
-  const { transactions } = data;
-  const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
+  const { inspections } = data;
+  const { setIsLoading, setInfoModal, setConfirmModal } = overlay;
   const {
     totalPage,
     currentPage,
     setSearchData,
     handleChangePage,
-    handleChangePath,
     handleSearchSubmit,
   } = feature;
 
@@ -59,7 +52,7 @@ export default function Transactions() {
 
     let conditionTimeout;
 
-    if (transactions) {
+    if (inspections) {
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -77,7 +70,7 @@ export default function Transactions() {
     };
 
     // eslint-disable-next-line
-  }, [transactions]);
+  }, [inspections]);
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
@@ -86,6 +79,24 @@ export default function Transactions() {
       ...prev,
       [name]: value?.toLowerCase(),
     }));
+  };
+
+  const handleDownloadExcel = async (inspectionId) => {
+    try {
+      const response = await inspectionDownload(inspectionId);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Laporan_Inspeksi_${inspectionId}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error("Gagal mendownload excel", error);
+      alert("Terjadi kesalahan saat mengunduh file.");
+    }
   };
 
   const handleDelete = (id) => {
@@ -103,7 +114,7 @@ export default function Transactions() {
       try {
         setIsLoading(false);
 
-        await deleteTransaction(id);
+        await deleteInspection(id);
 
         setInfoModal({
           isOpen: true,
@@ -135,81 +146,11 @@ export default function Transactions() {
     });
   };
 
-  const handleAdd = async (id) => {
-    const onClose = (reload, info) => {
-      if (!info) {
-        setInfoModal((prev) => ({ ...prev, isOpen: false }));
-      } else {
-        setFormModal((prev) => ({ ...prev, isOpen: false }));
-      }
-
-      if (reload) {
-        handleChangePage("default");
-      }
-    };
-
-    const onSubmit = async (e, formData) => {
-      e.preventDefault();
-      setIsLoading(true);
-
-      try {
-        const { success, message } = await updateTransaction(id, formData);
-
-        setFormModal((prev) => ({ ...prev, isOpen: false }));
-
-        setInfoModal({
-          isOpen: true,
-          title: `Success: ${success}`,
-          message: message,
-          onClose: () => onClose(true),
-        });
-      } catch (error) {
-        console.log(error);
-
-        setInfoModal({
-          isOpen: true,
-          isError: true,
-          title: "Failed",
-          message: error?.message,
-          onClose: () => onClose(false),
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    try {
-      setIsLoading(true);
-
-      const { data } = await showTransaction(id);
-
-      setIsLoading(false);
-
-      setFormModal({
-        isOpen: true,
-        fields: editObject,
-        data,
-        onSubmit,
-        onClose: () => onClose(false, true),
-      });
-    } catch (error) {
-      console.log(error);
-
-      setInfoModal({
-        isOpen: true,
-        isError: true,
-        title: "Failed",
-        message: error?.message,
-        onClose: () => onClose(false),
-      });
-    }
-  };
-
   return (
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaClipboardList className={styles.titleIcon} /> Equipment Loans Data
+          <FaToolbox className={styles.titleIcon} /> Inspection Tool Box
         </h1>
       </section>
 
@@ -226,10 +167,9 @@ export default function Transactions() {
 
             <select name="key" id="key" onChange={handleSearchChange}>
               <option value="">Search by</option>
-              <option value="transaction_id">Transaction ID</option>
-              <option value="user_id">User ID</option>
+              <option value="inspection_id">Inspection ID</option>
               <option value="asset_id">Asset ID</option>
-              <option value="loan_need">Needs</option>
+              <option value="user_id">User ID</option>
             </select>
 
             <button type="submit" title="Search">
@@ -238,7 +178,7 @@ export default function Transactions() {
 
             <button
               type="button"
-              onClick={() => navigate("/asset-loan", { replace: true })}
+              onClick={() => navigate("/toolbox-inspection")}
             >
               <FaPlus />
             </button>
@@ -249,56 +189,49 @@ export default function Transactions() {
           <table>
             <thead>
               <tr>
-                <th>Transaction ID</th>
-                <th>Mechanic ID</th>
+                <th>Inspection ID</th>
                 <th>Asset ID</th>
-                <th>Needs</th>
-                <th>Loan Date</th>
-                <th>Return Date</th>
+                <th>User ID</th>
+                <th>Inspection Time</th>
+                <th>Total Tools</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {transactions?.length === 0 ? (
+              {inspections?.length === 0 ? (
                 <tr>
                   <td colSpan={7}>No Assets</td>
                 </tr>
               ) : null}
 
-              {transactions?.map((t) => (
-                <tr key={t?.transaction_id}>
-                  <td>{t?.transaction_id}</td>
-                  <td>{t?.user_id}</td>
+              {inspections?.map((t) => (
+                <tr key={t?.inspection_id}>
+                  <td>{t?.inspection_id}</td>
                   <td>{t?.asset_id}</td>
-                  <td content="text">{t?.loan_needs}</td>
-                  <td>{formatedDateFull(t?.loanAt)}</td>
-                  <td>
-                    {formatedDateFull(t?.returnAt) || (
-                      <span status="NA">Not Returned</span>
-                    )}
-                  </td>
+                  <td>{t?.user_id}</td>
+                  <td>{formatedDateFull(t?.inspectionAt)}</td>
+                  <td>{t?.tools?.length || 0}</td>
                   <td>
                     <div className={styles.action}>
                       <button
                         title="View"
-                        onClick={() =>
-                          handleChangePath({
-                            path: "transactions/view",
-                            data: { ...viewObject, id: t?.transaction_id },
-                          })
-                        }
+                        onClick={() => handleDownloadExcel(t?.inspection_id)}
                       >
                         <FaEye />
                       </button>
                       <button
                         title="Edit"
-                        onClick={() => handleAdd(t?.transaction_id)}
+                        onClick={() =>
+                          navigate(
+                            `/toolbox-inspection/edit/${t?.inspection_id}`
+                          )
+                        }
                       >
                         <FaPencil />
                       </button>
                       <button
                         title="Delete"
-                        onClick={() => handleDelete(t?.transaction_id)}
+                        onClick={() => handleDelete(t?.inspection_id)}
                       >
                         <FaTrash />
                       </button>
@@ -318,7 +251,7 @@ export default function Transactions() {
             <FaArrowLeft /> Prev
           </button>
 
-          {totalPage === 1 ? (
+          {totalPage <= 1 ? (
             <div className={styles.page}>
               <span title={`Page ${currentPage}`}>{currentPage}</span>
             </div>
@@ -350,7 +283,7 @@ export default function Transactions() {
 
           <button
             onClick={() => handleChangePage(true)}
-            disabled={currentPage == totalPage}
+            disabled={currentPage == totalPage || totalPage == 0}
           >
             Next <FaArrowRight />
           </button>

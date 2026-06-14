@@ -315,7 +315,7 @@ export default function Repair() {
             <FaArrowLeft /> Prev
           </button>
 
-          {totalPage === 1 ? (
+          {totalPage <= 1 ? (
             <div className={styles.page}>
               <span title={`Page ${currentPage}`}>{currentPage}</span>
             </div>
@@ -347,7 +347,7 @@ export default function Repair() {
 
           <button
             onClick={() => handleChangePage(true)}
-            disabled={currentPage == totalPage}
+            disabled={currentPage == totalPage || totalPage == 0}
           >
             Next <FaArrowRight />
           </button>

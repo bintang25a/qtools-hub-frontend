@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styles from "../../styles/Admin.module.css";
 import { useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
+  FaBoxesStacked,
   FaEye,
   FaMagnifyingGlass,
   FaPencil,
@@ -18,24 +19,43 @@ import {
   updateAsset,
 } from "../../_services/asset";
 import {
-  addObject,
-  editObject,
-  viewObject,
+  addObject as assetAddObj,
+  editObject as assetEditObj,
+  viewObject as assetViewObj,
 } from "../../_utilities/actionObject/assetObject";
+import {
+  addObject as toolAddObj,
+  editObject as toolEditObj,
+  viewObject as toolViewObj,
+} from "../../_utilities/actionObject/toolObject";
+import {
+  assetSearchOptions,
+  toolSearchOptions,
+} from "../../_utilities/ToolAsset/searchObject";
+import { createTool, showTool, updateTool } from "../../_services/tool";
 
 export default function Asset() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
 
-  const { assets } = data;
+  const { assets, tools } = data;
   const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
   const {
     totalPage,
     currentPage,
+    toolAsset,
+    setToolAsset,
     setSearchData,
     handleChangePage,
     handleChangePath,
     handleSearchSubmit,
   } = feature;
+
+  const [items, setItems] = useState([]);
+  const [searchObj, setSearchObj] = useState([]);
+
+  const editObject = toolAsset ? toolEditObj : assetEditObj;
+  const addObject = toolAsset ? toolAddObj : assetAddObj;
+  const viewObject = toolAsset ? toolViewObj : assetViewObj;
 
   useEffect(() => {
     const { isFirstLoad } = firstLoad;
@@ -59,7 +79,10 @@ export default function Asset() {
 
     let conditionTimeout;
 
-    if (assets) {
+    if (assets && tools) {
+      setItems(toolAsset ? tools : assets);
+      setSearchObj(toolAsset ? toolSearchOptions : assetSearchOptions);
+
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -77,7 +100,7 @@ export default function Asset() {
     };
 
     // eslint-disable-next-line
-  }, [assets]);
+  }, [assets, tools, toolAsset]);
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
@@ -154,7 +177,11 @@ export default function Asset() {
 
       try {
         const { success, message } = isEdit
-          ? await updateAsset(id, formData)
+          ? toolAsset
+            ? await updateTool(id, formData)
+            : await updateAsset(id, formData)
+          : toolAsset
+          ? await createTool(formData)
           : await createAsset(formData);
 
         setFormModal((prev) => ({ ...prev, isOpen: false }));
@@ -183,7 +210,11 @@ export default function Asset() {
     try {
       setIsLoading(true);
 
-      const { data } = isEdit ? await showAsset(id) : {};
+      const { data } = isEdit
+        ? toolAsset
+          ? await showTool(id)
+          : await showAsset(id)
+        : {};
 
       setIsLoading(false);
 
@@ -207,6 +238,16 @@ export default function Asset() {
     }
   };
 
+  const defaultStyle = {
+    borderColor: "var(--primary)",
+    color: "var(--primary)",
+  };
+  const activeStyle = {
+    backgroundColor: "var(--primary)",
+    borderColor: "var(--primary)",
+    color: "var(--white)",
+  };
+
   return (
     <main className={styles.main}>
       <section className={styles.title}>
@@ -228,12 +269,11 @@ export default function Asset() {
 
             <select name="key" id="key" onChange={handleSearchChange}>
               <option value="">Search by</option>
-              <option value="asset_number">Asset Number</option>
-              <option value="class">Class</option>
-              <option value="status">Status</option>
-              <option value="location">Location</option>
-              <option value="district">District</option>
-              <option value="description">Description</option>
+              {searchObj?.map((s) => (
+                <option key={s?.value} value={s?.value}>
+                  {s?.label}
+                </option>
+              ))}
             </select>
 
             <button type="submit" title="Search">
@@ -243,6 +283,22 @@ export default function Asset() {
             <button type="button" onClick={() => handleAddEdit()}>
               <FaPlus />
             </button>
+
+            <button
+              type="button"
+              onClick={() => setToolAsset(true)}
+              style={toolAsset ? activeStyle : defaultStyle}
+            >
+              <FaWrench />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setToolAsset(false)}
+              style={!toolAsset ? activeStyle : defaultStyle}
+            >
+              <FaBoxesStacked />
+            </button>
           </div>
         </form>
 
@@ -250,40 +306,47 @@ export default function Asset() {
           <table>
             <thead>
               <tr>
-                <th>Asset Number</th>
-                <th>Class</th>
-                <th>Description</th>
-                <th>District</th>
-                <th>Location</th>
-                <th>Status</th>
+                <th>{toolAsset ? "Tool" : "Asset"} Number</th>
+                <th>{toolAsset ? "Name" : "Description"}</th>
+                <th>{toolAsset ? "Specification" : "District"}</th>
+                <th>{toolAsset ? "Stock Code" : "Location"}</th>
+                {!toolAsset && <th>Class</th>}
+                {!toolAsset && <th>Status</th>}
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {assets?.length === 0 ? (
+              {items?.length === 0 ? (
                 <tr>
-                  <td colSpan={7}>No Assets</td>
+                  <td colSpan={7}>No Tools or Assets</td>
                 </tr>
               ) : null}
 
-              {assets?.map((a) => (
-                <tr key={a?.asset_number}>
-                  <td>{a?.asset_number}</td>
-                  <td>{a?.class}</td>
-                  <td>{a?.description}</td>
-                  <td>{a?.district}</td>
-                  <td>{a?.location}</td>
-                  <td>
-                    <span status={a?.status}>{a?.status}</span>
-                  </td>
+              {items?.map((item) => (
+                <tr key={item?.asset_number || item?.tool_number}>
+                  <td>{item?.asset_number || item?.tool_number}</td>
+                  <td>{item?.description || item?.name}</td>
+                  <td>{item?.district || item?.specification}</td>
+                  <td>{item?.location || item?.stock_code}</td>
+                  {!toolAsset && <td>{item?.class}</td>}
+                  {!toolAsset && (
+                    <td>
+                      <span status={item?.status}>{item?.status}</span>
+                    </td>
+                  )}
                   <td>
                     <div className={styles.action}>
                       <button
                         title="View"
                         onClick={() =>
                           handleChangePath({
-                            path: "assets/view",
-                            data: { ...viewObject, id: a?.asset_number },
+                            path: toolAsset ? "tools/view" : "assets/view",
+                            data: {
+                              ...viewObject,
+                              id: toolAsset
+                                ? item?.tool_number
+                                : item?.asset_number,
+                            },
                           })
                         }
                       >
@@ -291,13 +354,22 @@ export default function Asset() {
                       </button>
                       <button
                         title="Edit"
-                        onClick={() => handleAddEdit(a?.asset_number, true)}
+                        onClick={() =>
+                          handleAddEdit(
+                            toolAsset ? item?.tool_number : item?.asset_number,
+                            true
+                          )
+                        }
                       >
                         <FaPencil />
                       </button>
                       <button
                         title="Delete"
-                        onClick={() => handleDelete(a?.asset_number)}
+                        onClick={() =>
+                          handleDelete(
+                            toolAsset ? item?.tool_number : item?.asset_number
+                          )
+                        }
                       >
                         <FaTrash />
                       </button>
@@ -317,7 +389,7 @@ export default function Asset() {
             <FaArrowLeft /> Prev
           </button>
 
-          {totalPage === 1 ? (
+          {totalPage <= 1 ? (
             <div className={styles.page}>
               <span title={`Page ${currentPage}`}>{currentPage}</span>
             </div>
@@ -349,7 +421,7 @@ export default function Asset() {
 
           <button
             onClick={() => handleChangePage(true)}
-            disabled={currentPage == totalPage}
+            disabled={currentPage == totalPage || totalPage == 0}
           >
             Next <FaArrowRight />
           </button>

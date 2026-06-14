@@ -3,6 +3,8 @@ import styles from "../../styles/User.module.css";
 import { useEffect, useState } from "react";
 import { formatedDateFull } from "../../_utilities/formatedDate";
 import { viewObject } from "../../_utilities/actionObject/transactionObject";
+import { FaDownload } from "react-icons/fa6";
+import { inspectionDownload } from "../../_services/action";
 
 export default function History() {
   const { data, firstLoad, overlay } = useOutletContext();
@@ -10,9 +12,11 @@ export default function History() {
 
   const { setIsLoading } = overlay;
 
-  const { transactions: transactionsData, reports } = data;
+  const { transactions: transactionsData, reports, inspections } = data;
 
   const [transactions, setTransactions] = useState(null);
+
+  const newInspection = sessionStorage.getItem("newInspection") || "";
 
   useEffect(() => {
     const { isFirstLoad } = firstLoad;
@@ -29,7 +33,7 @@ export default function History() {
 
     let conditionTimeout;
 
-    if (transactionsData) {
+    if (transactionsData && inspections && reports) {
       const grouped = transactionsData?.reduce(
         (acc, t) => {
           if (!t?.returnAt) {
@@ -65,7 +69,25 @@ export default function History() {
     };
 
     // eslint-disable-next-line
-  }, [transactionsData, reports]);
+  }, [transactionsData, reports, inspections]);
+
+  const handleDownloadExcel = async (inspectionId) => {
+    try {
+      const response = await inspectionDownload(inspectionId);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Laporan_Inspeksi_${inspectionId}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error("Gagal mendownload excel", error);
+      alert("Terjadi kesalahan saat mengunduh file.");
+    }
+  };
 
   const handleToView = (to, id) => {
     navigate(`/view/${to}/${id}`, {
@@ -205,6 +227,58 @@ export default function History() {
                 <span>{formatedDateFull(r?.createdAt)}</span>
                 <span>Follow Up: {r?.follow_up?.toUpperCase()}</span>
               </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.history}>
+        <h2>Inspection Tool Box</h2>
+
+        <div className={styles.container}>
+          {inspections?.length === 0 && (
+            <div className={styles.card} type="inspection">
+              <div className={styles.cardFooter}>
+                <span>You dont make any loan</span>
+              </div>
+            </div>
+          )}
+
+          {inspections?.map((ins) => (
+            <div
+              key={ins?.inspection_id}
+              onClick={() => handleDownloadExcel(ins?.inspection_id)}
+              className={styles.card}
+              type="inspection"
+              title={`Download Excel ${ins?.inspection_id}`}
+            >
+              <div className={styles.cardHeader}>
+                <h3>Inspection ID: {ins?.inspection_id}</h3>
+              </div>
+
+              <div className={styles.cardContent}>
+                <div>
+                  <span>Inspector ID</span>
+                  <span>Asset ID</span>
+                  <span>Total Tools</span>
+                </div>
+                <div>
+                  <span>: {ins?.user_id}</span>
+                  <span>: {ins?.asset_id}</span>
+                  <span>: {ins?.tools?.length}</span>
+                </div>
+              </div>
+
+              <div className={styles.cardFooter}>
+                <span>{formatedDateFull(ins?.createdAt)}</span>
+                <span>
+                  Click To Download <FaDownload />
+                </span>
+              </div>
+
+              {newInspection == ins?.inspection_id && (
+                <span className={styles.newBadge}>New!!!</span>
+              )}
             </div>
           ))}
         </div>

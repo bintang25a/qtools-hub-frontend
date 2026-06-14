@@ -190,7 +190,7 @@ export default function AssetReport() {
           state: { id, ...viewObject },
         });
       } else {
-        navigate(`/view/reports/${id}`, { replace: true });
+        navigate(`/view/report/${id}`, { replace: true });
       }
     };
 
@@ -206,8 +206,6 @@ export default function AssetReport() {
       payload.append("user_id", user?.nrp);
 
       const res = await createReport(payload);
-
-      alert(res?.data?.report_id);
 
       setInfoModal({
         isOpen: true,

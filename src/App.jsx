@@ -4,7 +4,7 @@ import PlannerLayout from "./layouts/AdminLayout";
 import Dashboard from "./pages/planner";
 import User from "./pages/planner/User";
 import Asset from "./pages/planner/Asset";
-import Transactions from "./pages/planner/Transactions";
+import Transactions from "./pages/planner/Transaction";
 import Repair from "./pages/planner/Repair";
 import Report from "./pages/planner/Report";
 import BasicView from "./pages/action/BasicView";
@@ -14,6 +14,9 @@ import History from "./pages/user";
 import AssetReport from "./pages/user/AssetReport";
 import AssetReturn from "./pages/user/AssetReturn";
 import ReportView from "./pages/action/ReportView";
+import ToolboxInspection from "./pages/user/ToolboxInspection";
+import Inspection from "./pages/planner/Inspection";
+import ToolboxInspectionEdit from "./pages/action/ToolboxInspectionEdit";
 
 export default function App() {
   return (
@@ -26,7 +29,10 @@ export default function App() {
           <Route path="asset-loan" element={<AssetLoan />} />
           <Route path="asset-return" element={<AssetReturn />} />
           <Route path="asset-report" element={<AssetReport />} />
-          <Route path="toolbox-inspection" element={<AssetReport />} />
+          <Route path="toolbox-inspection">
+            <Route index element={<ToolboxInspection />} />
+            <Route path="edit/:id" element={<ToolboxInspectionEdit />} />
+          </Route>
 
           <Route path="view">
             <Route index element={<Navigate to={"/"} />} />
@@ -42,7 +48,7 @@ export default function App() {
           <Route path="transactions" element={<Transactions />} />
           <Route path="repairs" element={<Repair />} />
           <Route path="reports" element={<Report />} />
-          <Route path="inspections" element={<main>Coming Soon</main>} />
+          <Route path="inspections" element={<Inspection />} />
 
           <Route path=":action/view" element={<BasicView />} />
         </Route>

@@ -4,25 +4,30 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
-  FaClipboardQuestion,
+  FaClipboardList,
   FaEye,
   FaMagnifyingGlass,
   FaPencil,
   FaPlus,
   FaTrash,
 } from "react-icons/fa6";
-import { deleteReport, showReport, updateReport } from "../../_services/report";
+import { formatedDateFull } from "../../_utilities/formatedDate";
+import {
+  deleteTransaction,
+  showTransaction,
+  updateTransaction,
+} from "../../_services/transaction";
 import {
   editObject,
   viewObject,
-} from "../../_utilities/actionObject/reportObject";
+} from "../../_utilities/actionObject/transactionObject";
 
-export default function Report() {
+export default function Transaction() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
   const navigate = useNavigate();
 
+  const { transactions } = data;
   const { setIsLoading, setInfoModal, setConfirmModal, setFormModal } = overlay;
-  const { reports } = data;
   const {
     totalPage,
     currentPage,
@@ -54,7 +59,7 @@ export default function Report() {
 
     let conditionTimeout;
 
-    if (reports) {
+    if (transactions) {
       conditionTimeout = setTimeout(() => {
         setIsFirstLoad(false);
         setIsLoading(false);
@@ -72,7 +77,7 @@ export default function Report() {
     };
 
     // eslint-disable-next-line
-  }, [reports]);
+  }, [transactions]);
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
@@ -98,12 +103,12 @@ export default function Report() {
       try {
         setIsLoading(false);
 
-        await deleteReport(id);
+        await deleteTransaction(id);
 
         setInfoModal({
           isOpen: true,
           title: "Successfully",
-          message: `Delete report with id ${id} successfully`,
+          message: `Delete transaction with id ${id} successfully`,
           onClose: () => onClose(false),
         });
       } catch (error) {
@@ -130,7 +135,7 @@ export default function Report() {
     });
   };
 
-  const handleEdit = async (id) => {
+  const handleAdd = async (id) => {
     const onClose = (reload, info) => {
       if (!info) {
         setInfoModal((prev) => ({ ...prev, isOpen: false }));
@@ -148,7 +153,7 @@ export default function Report() {
       setIsLoading(true);
 
       try {
-        const { success, message } = await updateReport(id, formData);
+        const { success, message } = await updateTransaction(id, formData);
 
         setFormModal((prev) => ({ ...prev, isOpen: false }));
 
@@ -176,7 +181,7 @@ export default function Report() {
     try {
       setIsLoading(true);
 
-      const { data } = await showReport(id);
+      const { data } = await showTransaction(id);
 
       setIsLoading(false);
 
@@ -204,8 +209,7 @@ export default function Report() {
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaClipboardQuestion className={styles.titleIcon} /> Berita Acara
-          Kerusakan Data
+          <FaClipboardList className={styles.titleIcon} /> Equipment Loans Data
         </h1>
       </section>
 
@@ -222,20 +226,17 @@ export default function Report() {
 
             <select name="key" id="key" onChange={handleSearchChange}>
               <option value="">Search by</option>
-              <option value="report_id">Report ID</option>
-              <option value="reporter_id">Reporter ID</option>
+              <option value="transaction_id">Transaction ID</option>
+              <option value="user_id">User ID</option>
               <option value="asset_id">Asset ID</option>
-              <option value="description">Description</option>
+              <option value="loan_need">Needs</option>
             </select>
 
             <button type="submit" title="Search">
               <FaMagnifyingGlass />
             </button>
 
-            <button
-              type="button"
-              onClick={() => navigate("/asset-report", { replace: true })}
-            >
+            <button type="button" onClick={() => navigate("/asset-loan")}>
               <FaPlus />
             </button>
           </div>
@@ -245,52 +246,42 @@ export default function Report() {
           <table>
             <thead>
               <tr>
-                <th>Report ID</th>
-                <th>Reporter ID</th>
+                <th>Transaction ID</th>
+                <th>Mechanic ID</th>
                 <th>Asset ID</th>
-                <th>Description</th>
-                <th>Evidence 1</th>
-                <th>Remark 1</th>
-                <th>Evidence 2</th>
-                <th>Remark 2</th>
-                <th>Group Leader ID</th>
-                <th>Planner ID</th>
-                <th>Plant Engineer ID</th>
-                <th>Section Head ID</th>
-                <th>Dept Head ID</th>
+                <th>Needs</th>
+                <th>Loan Date</th>
+                <th>Return Date</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {reports?.length === 0 ? (
+              {transactions?.length === 0 ? (
                 <tr>
-                  <td colSpan={14}>No reports right now</td>
+                  <td colSpan={7}>No Assets</td>
                 </tr>
               ) : null}
 
-              {reports?.map((r) => (
-                <tr key={r?.report_id}>
-                  <td>{r?.report_id}</td>
-                  <td>{r?.reporter_id}</td>
-                  <td>{r?.asset_id}</td>
-                  <td text="true">{r?.description}</td>
-                  <td>{r?.evidence1}</td>
-                  <td>{r?.remark1}</td>
-                  <td>{r?.evidence2}</td>
-                  <td>{r?.remark2}</td>
-                  <td>{r?.group_leader_id}</td>
-                  <td>{r?.planner_id}</td>
-                  <td>{r?.plant_engineer_id}</td>
-                  <td>{r?.section_head_id}</td>
-                  <td>{r?.dept_head_id}</td>
+              {transactions?.map((t) => (
+                <tr key={t?.transaction_id}>
+                  <td>{t?.transaction_id}</td>
+                  <td>{t?.user_id}</td>
+                  <td>{t?.asset_id}</td>
+                  <td content="text">{t?.loan_needs}</td>
+                  <td>{formatedDateFull(t?.loanAt)}</td>
+                  <td>
+                    {formatedDateFull(t?.returnAt) || (
+                      <span status="NA">Not Returned</span>
+                    )}
+                  </td>
                   <td>
                     <div className={styles.action}>
                       <button
                         title="View"
                         onClick={() =>
                           handleChangePath({
-                            path: "reports/view",
-                            data: { ...viewObject, id: r?.report_id },
+                            path: "transactions/view",
+                            data: { ...viewObject, id: t?.transaction_id },
                           })
                         }
                       >
@@ -298,13 +289,13 @@ export default function Report() {
                       </button>
                       <button
                         title="Edit"
-                        onClick={() => handleEdit(r?.report_id, true)}
+                        onClick={() => handleAdd(t?.transaction_id)}
                       >
                         <FaPencil />
                       </button>
                       <button
                         title="Delete"
-                        onClick={() => handleDelete(r?.report_id)}
+                        onClick={() => handleDelete(t?.transaction_id)}
                       >
                         <FaTrash />
                       </button>

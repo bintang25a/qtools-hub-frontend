@@ -260,6 +260,72 @@
           transform: scale(0.9);
         }
       }
+
+      .tableContainer {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: var(--px-16);
+
+        overflow: auto;
+
+        > input {
+          width: 100%;
+
+          border: 1px solid var(--primary);
+          border-radius: var(--px-8);
+          padding: var(--px-8);
+          background-color: transparent;
+
+          position: sticky;
+          left: 0;
+        }
+
+        > table {
+          width: 100%;
+          border-collapse: collapse;
+
+          > thead > tr > th {
+            text-align: center;
+            text-wrap: nowrap;
+
+            font-size: var(--fs-6);
+            font-weight: 700;
+
+            border: 1px solid var(--primary);
+            padding: var(--px-8);
+          }
+
+          > tbody > tr {
+            > td {
+              text-align: center;
+              text-wrap: nowrap;
+
+              font-size: var(--fs-5);
+              font-weight: 400;
+
+              border: 1px solid var(--primary);
+              padding: var(--px-4);
+
+              > input[name="quantity"] {
+                width: var(--px-64);
+                justify-self: center;
+                text-align: center;
+              }
+            }
+
+            > td:has(input[type="radio"]) {
+              > label {
+                display: flex;
+                justify-content: center;
+                justify-self: flex-start;
+                align-items: center;
+                gap: var(--px-4);
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -307,6 +373,7 @@
         gap: var(--px-8);
 
         cursor: pointer;
+        position: relative;
 
         .cardHeader {
           width: 100%;
@@ -356,6 +423,29 @@
             font-weight: 500;
             color: var(--gray-100);
           }
+
+          > span:has(svg) {
+            display: flex;
+            align-items: center;
+            gap: var(--px-8);
+            line-height: 1;
+          }
+        }
+
+        .newBadge {
+          position: absolute;
+          top: var(--px-32);
+          right: var(--px-8);
+
+          border-radius: var(--px-24);
+          background-color: var(--btn-danger);
+          padding: var(--px-8) var(--px-24);
+
+          transform: rotateZ(25deg);
+
+          font-size: var(--fs-7);
+          font-weight: 600;
+          color: var(--white);
         }
       }
       .card[type="notReturned"] {
@@ -377,6 +467,13 @@
 
         .cardFooter {
           background-color: var(--btn-warning);
+        }
+      }
+      .card[type="inspection"] {
+        border-color: var(--thirdnary);
+
+        .cardFooter {
+          background-color: var(--thirdnary);
         }
       }
       .card:not(:has(.cardHeader)) {

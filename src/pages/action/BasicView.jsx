@@ -18,7 +18,9 @@ import { viewObject as assetObj } from "../../_utilities/actionObject/assetObjec
 import { viewObject as transactionObj } from "../../_utilities/actionObject/transactionObject";
 import { viewObject as repairObj } from "../../_utilities/actionObject/repairObject";
 import { viewObject as reportObj } from "../../_utilities/actionObject/reportObject";
+import { viewObject as ToolObj } from "../../_utilities/actionObject/toolObject";
 import { FaArrowLeft } from "react-icons/fa6";
+import { showTool } from "../../_services/tool";
 
 export default function BasicView() {
   const { feature, firstLoad, overlay } = useOutletContext();
@@ -57,6 +59,8 @@ export default function BasicView() {
             ? await showRepair(id)
             : action === "reports"
             ? await showReport(id)
+            : action === "tools"
+            ? await showTool(id)
             : { data: { success: false, message: "Action empty" } };
 
         setData(res?.data);
@@ -84,6 +88,8 @@ export default function BasicView() {
         ? repairObj
         : path === "reports"
         ? reportObj
+        : path === "tools"
+        ? ToolObj
         : { data: { success: false, message: "Action empty" } };
 
     handleChangePath({

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DynamicTechnoGrid from "../components/background/DynamicTechnoGrid";
 import styles from "../styles/Layout.module.css";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import LoadingJump from "../components/overlay/JumpLoading";
 import ConfirmModal from "../components/overlay/ConfirmModal";
 import InfoModal from "../components/overlay/InfoModal";
@@ -13,6 +13,8 @@ import UserHeader from "../components/layout/UserHeader";
 import { getTransactionsByUser } from "../_services/transaction";
 import { getUsers } from "../_services/user";
 import { getReportsByUser } from "../_services/report";
+import { getTools } from "../_services/tool";
+import { getInspectionsByUser } from "../_services/inspection";
 
 export default function UserLayout() {
   const location = useLocation();
@@ -56,10 +58,11 @@ export default function UserLayout() {
 
   const [user, setUser] = useState(userParse || {});
   const [users, setUsers] = useState([]);
+  const [tools, setTools] = useState([]);
   const [assets, setAssets] = useState([]);
   const [reports, setReports] = useState([]);
-  const [repairs, setRepairs] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [inspections, setInspections] = useState([]);
 
   const [toggleSearch, setToggleSearch] = useState(false);
 
@@ -93,8 +96,6 @@ export default function UserLayout() {
           queryArray.push(`${searchData?.key}=${searchData?.value}`);
         }
 
-        const query = queryArray?.join("&");
-
         if (pathname === "/asset-loan") {
           const [assetsData] = await Promise.all([getAssets("limit=50")]);
 
@@ -113,14 +114,25 @@ export default function UserLayout() {
 
           setAssets(assetsData?.data);
           setUsers(usersData?.data);
-        } else if (pathname === "/") {
-          const [transactionsData, reportsData] = await Promise.all([
-            getTransactionsByUser(`user_id=${user?.nrp}`),
-            getReportsByUser(`user_id=${user?.nrp}`),
+        } else if (pathname?.includes("/toolbox-inspection")) {
+          const [assetsData, toolsData] = await Promise.all([
+            getAssets("all=true"),
+            getTools("all=true"),
           ]);
+
+          setAssets(assetsData?.data);
+          setTools(toolsData?.data);
+        } else if (pathname === "/") {
+          const [transactionsData, reportsData, inspectionsData] =
+            await Promise.all([
+              getTransactionsByUser(`user_id=${user?.nrp}`),
+              getReportsByUser(`user_id=${user?.nrp}`),
+              getInspectionsByUser(`user_id=${user?.nrp}`),
+            ]);
 
           setTransactions(transactionsData?.data);
           setReports(reportsData?.data);
+          setInspections(inspectionsData?.data);
         }
       } catch (error) {
         console.log(error);
@@ -161,10 +173,11 @@ export default function UserLayout() {
               data: {
                 user,
                 users,
+                tools,
                 assets,
                 transactions,
                 reports,
-                repairs,
+                inspections,
               },
               firstLoad: {
                 isChecking,
