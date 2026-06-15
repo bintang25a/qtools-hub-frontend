@@ -109,11 +109,8 @@ export default function UserHeader({ user, hasNotifications }) {
 
       {profileOpen && (
         <div className={styles.personalMenu}>
-          <button onClick={handleOpen}>
+          <Link onClick={handleOpen}>
             <MdImage /> Change Photo
-          </button>
-          <Link to={"notifications"}>
-            <MdNotifications /> Notification
           </Link>
           <button onClick={handleLogout}>
             <MdLogout /> Logout

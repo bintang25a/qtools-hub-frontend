@@ -46,6 +46,7 @@ export default function App() {
           <Route path="users" element={<User />} />
           <Route path="assets" element={<Asset />} />
           <Route path="transactions" element={<Transactions />} />
+          <Route path="notifications" element={<Transactions />} />
           <Route path="repairs" element={<Repair />} />
           <Route path="reports" element={<Report />} />
           <Route path="inspections" element={<Inspection />} />

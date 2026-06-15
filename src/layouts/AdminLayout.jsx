@@ -17,6 +17,7 @@ import Sidebar from "../components/layout/Sidebar";
 import FormModal from "../components/overlay/FormModal";
 import { getTools } from "../_services/tool";
 import { getInspections } from "../_services/inspection";
+import socket from "../_services/socket";
 
 export default function PlannerLayout() {
   const navigate = useNavigate();
@@ -70,6 +71,47 @@ export default function PlannerLayout() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [toolAsset, setToolAsset] = useState(true);
+
+  useEffect(() => {
+    if (!user?.nrp) return;
+
+    socket.emit("register", user?.nrp);
+
+    console.log(`Socket registered: ${user?.nrp}`);
+  }, [user]);
+
+  useEffect(() => {
+    const handleReminder = (notification) => {
+      console.log(notification);
+
+      setHasNotifications(true);
+
+      setInfoModal({
+        isOpen: true,
+        isError: false,
+        title: notification.title,
+        message: notification.message,
+        onClose: () => {
+          setInfoModal((prev) => ({
+            ...prev,
+            isOpen: false,
+          }));
+        },
+      });
+    };
+
+    socket.on("return-reminder", handleReminder);
+
+    return () => {
+      socket.off("return-reminder", handleReminder);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname === "/admin/notifications") {
+      setHasNotifications(false);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     setIsChecking(true);
@@ -153,7 +195,10 @@ export default function PlannerLayout() {
           setAssets(assetsData?.data);
           setTotalPage(total_page || 1);
           setCurrentPage(current_page);
-        } else if (pathname === "/admin/transactions") {
+        } else if (
+          pathname === "/admin/transactions" ||
+          pathname === "/admin/notifications"
+        ) {
           const [transactionsData] = await Promise.all([
             getTransactions(query),
           ]);

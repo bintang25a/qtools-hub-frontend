@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import styles from "../../styles/Admin.module.css";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -24,6 +24,7 @@ import {
 
 export default function Transaction() {
   const { data, firstLoad, overlay, feature } = useOutletContext();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const { transactions } = data;
@@ -205,11 +206,19 @@ export default function Transaction() {
     }
   };
 
+  const filteredTransactions =
+    pathname === "/admin/notifications"
+      ? transactions?.filter((t) => !t?.returnAt)
+      : transactions;
+
   return (
     <main className={styles.main}>
       <section className={styles.title}>
         <h1>
-          <FaClipboardList className={styles.titleIcon} /> Equipment Loans Data
+          <FaClipboardList className={styles.titleIcon} />{" "}
+          {pathname === "/admin/notifications"
+            ? "Asset not returned (Notifications)"
+            : "Equipment Loans Data"}
         </h1>
       </section>
 
@@ -256,13 +265,13 @@ export default function Transaction() {
               </tr>
             </thead>
             <tbody>
-              {transactions?.length === 0 ? (
+              {filteredTransactions?.length === 0 ? (
                 <tr>
                   <td colSpan={7}>No Assets</td>
                 </tr>
               ) : null}
 
-              {transactions?.map((t) => (
+              {filteredTransactions?.map((t) => (
                 <tr key={t?.transaction_id}>
                   <td>{t?.transaction_id}</td>
                   <td>{t?.user_id}</td>

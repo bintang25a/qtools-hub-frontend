@@ -3,8 +3,8 @@ import axios from "axios";
 const API = axios.create({
   baseURL:
     // "https://yrs-submissions-object-classic.trycloudflare.com/api",
-    "https://labor-heading-unified-motel.trycloudflare.com/api",
-  // "http://127.0.0.1:5000/api",
+    // "https://labor-heading-unified-motel.trycloudflare.com/api",
+    "http://127.0.0.1:5000/api",
 });
 
 API.interceptors.request.use(
