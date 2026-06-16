@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const baseURL = "https://stardevs.my.id";
+export const baseURL = "https://astro-web.stardevs.my.id";
 
 const API = axios.create({
   baseURL: `${baseURL}/api`,
